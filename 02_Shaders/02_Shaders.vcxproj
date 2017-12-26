@@ -58,6 +58,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -90,10 +91,6 @@
     <ClCompile Include="FunctionChooser.cpp" />
     <ClCompile Include="gCamera.cpp" />
     <ClCompile Include="gTimer.cpp" />
-    <ClCompile Include="imgui\imgui.cpp" />
-    <ClCompile Include="imgui\imgui_demo.cpp" />
-    <ClCompile Include="imgui\imgui_draw.cpp" />
-    <ClCompile Include="imgui\imgui_impl_sdl_gl3.cpp" />
     <ClCompile Include="ShaderProg.cpp" />
     <ClCompile Include="Image2D.cpp" />
     <ClCompile Include="GPUState.cpp" />
@@ -102,6 +99,12 @@
     <ClCompile Include="FBO.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyApp.cpp" />
+    <ClCompile Include="T:\OGLPack\include\imgui\auto\auto.cpp" />
+    <ClCompile Include="T:\OGLPack\include\imgui\imdock.cpp" />
+    <ClCompile Include="T:\OGLPack\include\imgui\imgui.cpp" />
+    <ClCompile Include="T:\OGLPack\include\imgui\imgui_demo.cpp" />
+    <ClCompile Include="T:\OGLPack\include\imgui\imgui_draw.cpp" />
+    <ClCompile Include="T:\OGLPack\include\imgui\imgui_impl_sdl_gl3.cpp" />
     <ClCompile Include="TextEditor_build.cpp" />
     <ClCompile Include="TextEditor.cpp" />
     <ClCompile Include="TextEditor_CSG.cpp" />
@@ -116,13 +119,6 @@
     <ClInclude Include="gCamera.h" />
     <ClInclude Include="GLCHECK.h" />
     <ClInclude Include="gTimer.h" />
-    <ClInclude Include="imgui\imconfig.h" />
-    <ClInclude Include="imgui\imgui.h" />
-    <ClInclude Include="imgui\imgui_impl_sdl_gl3.h" />
-    <ClInclude Include="imgui\imgui_internal.h" />
-    <ClInclude Include="imgui\stb_rect_pack.h" />
-    <ClInclude Include="imgui\stb_textedit.h" />
-    <ClInclude Include="imgui\stb_truetype.h" />
     <ClInclude Include="ShaderProg.h" />
     <ClInclude Include="Image2D.h" />
     <ClInclude Include="GPUState.h" />
@@ -130,6 +126,17 @@
     <ClInclude Include="FileIO.h" />
     <ClInclude Include="FBO.h" />
     <ClInclude Include="MyApp.h" />
+    <ClInclude Include="T:\OGLPack\include\imgui\auto\core.h" />
+    <ClInclude Include="T:\OGLPack\include\imgui\auto\impl_base.h" />
+    <ClInclude Include="T:\OGLPack\include\imgui\auto\impl_glm.h" />
+    <ClInclude Include="T:\OGLPack\include\imgui\imconfig.h" />
+    <ClInclude Include="T:\OGLPack\include\imgui\imdock.h" />
+    <ClInclude Include="T:\OGLPack\include\imgui\imgui.h" />
+    <ClInclude Include="T:\OGLPack\include\imgui\imgui_impl_sdl_gl3.h" />
+    <ClInclude Include="T:\OGLPack\include\imgui\imgui_internal.h" />
+    <ClInclude Include="T:\OGLPack\include\imgui\stb_rect_pack.h" />
+    <ClInclude Include="T:\OGLPack\include\imgui\stb_textedit.h" />
+    <ClInclude Include="T:\OGLPack\include\imgui\stb_truetype.h" />
     <ClInclude Include="TextEditor.h" />
     <ClInclude Include="Uniforms.h" />
   </ItemGroup>

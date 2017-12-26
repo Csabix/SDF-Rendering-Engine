@@ -59,7 +59,9 @@ int main( int argc, char* args[] )
 		SDL_GL_SwapWindow(win);			glcheck("SDL Swap Error");
 		app.PresentationUpdate();
 
-		GPU_Timer gpu_timer;			glcheck("GPU_Timer Error");
+		GPU_Timer gpu_first_timer;			glcheck("GPU_Timer Error");
+		GPU_Timer gpu_update_timer;			glcheck("GPU_Timer Error");
+		GPU_Timer gpu_render_timer;			glcheck("GPU_Timer Error");
 
 		CPU_Timer cpu_timer; cpu_timer.Start();	size_t frame_cnt = 0;
 
@@ -95,48 +97,58 @@ int main( int argc, char* args[] )
 			auto &times = app.debug.times;
 			if(!app.debug.pause)
 			{
-				gpu_timer.Start(); app.Update(); gpu_timer.Stop();			//UPDATE #1
+				gpu_first_timer.Start(); app.Update(); gpu_first_timer.Stop();			//UPDATE #1
 
-				float t = gpu_timer.GetLastDeltaMilli();
-				times.sum_of_updates = t;
+				float first_frame_time = gpu_first_timer.GetLastDeltaMilli();
+				times.sum_of_updates = first_frame_time;
 				auto &u = times.update[std::min(times.consts.N - 1, app.iternum - 1)];
-				u = glm::mix<float>(t, u, times.consts.learning_rate);			//moving avg
+				u = glm::mix<float>(first_frame_time, u, times.consts.learning_rate);			//moving avg
 				times.num_of_updates = 1;
 
 				if(times.optimize)
 				{			//the very first iterations has to keep exactly the render times, later it is OK to be bit late, even 2x slower
-					double remaining_update_time = (app.iternum == 0 ?
-													times.consts.target - 1.7*times.render :
-													times.consts.target - times.render);
-					while(times.update[std::min(times.consts.N - 1, app.iternum - 1)]
-							< remaining_update_time - times.sum_of_updates + times.cpu_gpu_time_err*0.5)
+					int to_update = 0, const start_iternum = app.iternum;
+					for (float sum = 2*times.render + 2*first_frame_time;
+						 sum < times.consts.target;
+						 sum += times.update[std::min(times.consts.N - 1, to_update + start_iternum)])
+						++to_update;
+					gpu_update_timer.Start();
+					for (int i=0; i < to_update ; ++i)
+						app.Update();
+					gpu_update_timer.Stop();
+					float sum_time = gpu_update_timer.GetLastDeltaMilli();
+					float avg_updated = sum_time / (float) to_update;
+					for (int i = start_iternum; i < start_iternum + to_update; ++i)
 					{
-						gpu_timer.Start(); app.Update(); gpu_timer.Stop();	//UPDATES
-
-						auto &u = times.update[std::min(times.consts.N - 1, app.iternum - 1)];
-						float t = gpu_timer.GetLastDeltaMilli();
-						u = glm::mix<float>(t, u, times.consts.learning_rate); // moving avg
-						++times.num_of_updates;
-						times.sum_of_updates += t;
+						auto &u = times.update[std::min(times.consts.N - 1, i)];
+						u = glm::mix<float>(avg_updated, u, times.consts.learning_rate/3.f);
 					}
+					times.sum_of_updates += sum_time;
+					times.num_of_updates += to_update;
+
 				}
 			}//end of event processing
 
-			gpu_timer.Start();
+			gpu_render_timer.Start();
 			app.Render();
 			//ImGui::ShowTestWindow();
 			ImGui::Render();
+			gpu_render_timer.Stop();
+
+			gpu_first_timer.swap();
+			gpu_update_timer.swap();
+			gpu_render_timer.swap();
+
 			SDL_GL_SwapWindow(win);
 
-			gpu_timer.Stop();
-			times.render = glm::mix<float>((float)gpu_timer.GetLastDeltaMilli(), times.render, times.consts.learning_rate);
+			times.render = glm::mix<float>((float)gpu_render_timer.GetLastDeltaMilli(), times.render, times.consts.learning_rate);
 			times.total = times.sum_of_updates + times.render;
 
 			const size_t N = 25;
 			if(++frame_cnt % N == 0)
 			{
 				cpu_timer.Finish();
-				float avg_cpu_measured_time = cpu_timer.GetSeconds()*1000.0 / (float) N;
+				float avg_cpu_measured_time = cpu_timer.GetMilliseconds() / (double) N;
 				cpu_timer.Start();
 				times.cpu_measured_time = glm::mix<float>(avg_cpu_measured_time, times.cpu_measured_time, times.consts.learning_rate / sqrtf(N));
 			}

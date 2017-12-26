@@ -48,4 +48,8 @@ public:
 	{
 		return std::chrono::duration_cast<std::chrono::duration<double>>(finish - start).count();
 	}
+	inline double GetMilliseconds()
+	{
+		return std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(finish - start).count();
+	}
 };

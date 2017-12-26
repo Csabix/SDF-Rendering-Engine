@@ -1,9 +1,15 @@
 #include "FunctionChooser.h"
-#include "imgui\imgui.h"
+#include <imgui/auto.h>
+
 
 void GUI::FunctionChooser::ConstantFunctionChooser()
 {
 	ImGui::DragFloat(" = f(x)", &constant_value, 0.01f);
+}
+
+void GUI::FunctionChooser::LinesFunctionChooser()
+{
+	ImGui::Auto(points, this->header_name);
 }
 
 void GUI::FunctionChooser::HermiteFunctionChooser()
@@ -56,13 +62,14 @@ void GUI::FunctionChooser::ChangeFunction()
 		}
 
 		ImGui::PushID(header_name);
-		const char * items[] = { "Cubic hermite", "Constant" };
+		const char * items[] = { "Cubic hermite", "Constant", "Lines"};
 
-		ImGui::Combo("Function type", &current_funtion_type, items, 2);
+		ImGui::Combo("Function type", &current_funtion_type, items, 3);
 		switch(current_funtion_type)
 		{
 		case 0:	HermiteFunctionChooser();	break;
 		case 1:	ConstantFunctionChooser();	break;
+		case 2:	LinesFunctionChooser();	break;
 		default:break;
 		}
 
@@ -116,4 +123,36 @@ std::array<float, 4> FUN::hermite3_coeffs(glm::vec2 p0, glm::vec2 p1, float d0, 
 	ret[2] = (-2 * x[0] - x[1])*d + c;
 	ret[3] = d;
 	return ret;
+}
+
+void GUI::LinesFunction::ChangeFunction()
+{
+	if (ImGui::CollapsingHeader(header_name))
+	{
+		ImGui::Indent();
+		ImGui::Auto(points, header_name);
+		std::stable_sort(points.begin(), points.end(), [](const glm::vec2 &a, const glm::vec2 & b)->bool
+			{
+				return a.x < b.x;
+			});
+		if (!points.empty())
+		{
+			glm::vec2 min, max = points.front();
+			for (const glm::vec2 &e : points)
+			{
+				min = glm::min(e, min);
+				max = glm::max(e, max);
+			}
+			static const int N = 128;	//no runtime reallocation
+			static float plot[N + 1];	//only one vector
+			for (int i = 0; i < N; ++i)
+			{
+				float t = min.x + (i / (float)N)*(max.x - min.x);
+				plot[i] = this->operator()(t);
+			}
+			float width = glm::max(ImGui::GetContentRegionAvailWidth(), 1.f);
+			ImGui::PlotLines("##Lines", plot, N, 0, nullptr, min.y, max.y, {width, width*0.25f});
+		}
+		ImGui::Unindent();
+	}
 }

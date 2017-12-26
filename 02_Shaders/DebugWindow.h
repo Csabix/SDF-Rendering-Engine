@@ -52,10 +52,10 @@ namespace GUI
 
 		struct	//functions
 		{
-			FunctionChooser spheretrace_stepcount = FunctionChooser("Iteration -> Sphere-trace stepcount", glm::vec2(0.f, 20.f), glm::vec2(15.f, 2.f), 1, 0.f);
-			FunctionChooser resolution_multipier = FunctionChooser("Iteration -> Resolution multipier", glm::vec2(0, 0.21f), glm::vec2(12, 1), 1.5f, 0.1f);
-			FunctionChooser shadow_stepcount = FunctionChooser("Iteration -> Shadow stepcount", glm::vec2(0.f, 0.f), glm::vec2(40.f, 2.f), 2.5, -10.f);
-			FunctionChooser user_itercount = FunctionChooser("Iteration -> User Itercount", glm::vec2(0, 7), glm::vec2(35, 16), 1.0f, 1.0f);
+			LinesFunction resolution_multipier = LinesFunction("Iteration -> Resolution multipier", { {0.f, 0.4f},{2.f,0.8f}, {4.f, 1.f} });
+			LinesFunction spheretrace_stepcount = LinesFunction("Iteration -> Sphere-trace stepcount", { {0.f, 35.f }, {5.f, 30.f}, {15.f, 2.f} });
+			LinesFunction shadow_stepcount = LinesFunction("Iteration -> Shadow stepcount",{ { 0.f, 0.f }, { 40.f, 2.f }});
+			LinesFunction user_itercount = LinesFunction("Iteration -> User Itercount", { {0, 7}, {35, 16} });
 		} functions;
 
 		struct	//gpu_states

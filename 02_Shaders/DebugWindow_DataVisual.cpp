@@ -261,23 +261,24 @@ void GUI::DebugWindow::ShowVisualisationOptions()
 		ImGui::SameLine();
 		if(ImGui::RadioButton("10fps", 6 * times.consts.fps60ms == times.consts.target)) times.consts.target = 6 * times.consts.fps60ms;
 
-		ImGui::TextDisabled("Computation time: %0.1f ms", times.sum_of_updates);
-		ImGui::TextDisabled("Show & UI time: %0.1f ms", times.render);
-		ImGui::TextDisabled("Total GPU time: %0.1f ms", times.total);
-		ImGui::TextDisabled("Total CPU time: %0.1f ms", times.cpu_measured_time);
-		ImGui::TextDisabled("Average FPS: %0.1f ms", 1000.0 / times.cpu_measured_time);
+		ImGui::TextDisabled("Computation time: %0.2f ms", times.sum_of_updates);
+		ImGui::TextDisabled("Show & UI time: %0.2f ms", times.render);
+		ImGui::TextDisabled("Total GPU time: %0.2f ms", times.total);
+		ImGui::TextDisabled("Total CPU time: %0.2f ms", times.cpu_measured_time);
+		ImGui::TextDisabled("Average FPS: %0.2f", 1000.0 / times.cpu_measured_time);
+		ImGui::TextDisabled("CPU GPU error: %0.2f ms", 1000.0 / times.cpu_gpu_time_err);
 		ImGui::TextDisabled("Number of  updates: %d", times.num_of_updates);
 		float width = ImGui::GetContentRegionAvailWidth();
 		
-		ImGui::PlotHistogram("##UPDATES",times.update.data(),times.update.size()/8, 0,nullptr,0,times.consts.target,ImVec2(width,10*sqrtf(width)));
+		ImGui::PlotHistogram("##UPDATES",times.update.data(),times.update.size()/8, 0,nullptr,0,times.consts.target*0.1f,ImVec2(width,10*sqrtf(width)));
 		
 		if(ImGui::BeginChild("Time prediction vector", ImVec2(0, 260)))
 		{
 			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[0]);
 			ImGui::Separator();
 			for(int i = 0; i < times.consts.N - 1; ++i)
-				ImGui::TextDisabled("%d itaration time : %0.1f ms", i + 1, times.update[i]);
-			ImGui::TextDisabled("Above %d iteration: %0.1f ms", times.consts.N, times.update[times.consts.N - 1]);
+				ImGui::TextDisabled("%d itaration time : %0.2f ms", i + 1, times.update[i]);
+			ImGui::TextDisabled("Above %d iteration: %0.2f ms", times.consts.N, times.update[times.consts.N - 1]);
 			ImGui::Separator();
 			ImGui::PopFont();
 		}
