@@ -233,7 +233,7 @@ void GUI::DebugWindow::ShowVisualisationOptions()
 		ImGui::NextColumn();			DispHistDataCH(3);
 		ImGui::Columns(1, 0, false);	ImGui::PopFont();
 
-		static char filename[256] = "R:/stats.txt";
+		static char filename[512] = "C:/Users/Csabix/Documents/Grafika/RawData/01_raw.bin";
 		ImGui::PushItemWidth(width*0.55 + 50);
 		ImGui::InputText("Filename", filename, 256, ImGuiInputTextFlags_AutoSelectAll);
 		ImGui::PopItemWidth();
@@ -265,12 +265,13 @@ void GUI::DebugWindow::ShowVisualisationOptions()
 		ImGui::TextDisabled("Show & UI time: %0.2f ms", times.render);
 		ImGui::TextDisabled("Total GPU time: %0.2f ms", times.total);
 		ImGui::TextDisabled("Total CPU time: %0.2f ms", times.cpu_measured_time);
-		ImGui::TextDisabled("Average FPS: %0.2f", 1000.0 / times.cpu_measured_time);
-		ImGui::TextDisabled("CPU GPU error: %0.2f ms", 1000.0 / times.cpu_gpu_time_err);
+		ImGui::TextDisabled("Average FPS: %0.2f FPS", 1000.0 / times.cpu_measured_time);
+		ImGui::TextDisabled("CPU GPU error: %0.2f ms", times.cpu_gpu_time_err);
+		ImGui::TextDisabled("Learned update diff %d", times.learned_update_diff);
 		ImGui::TextDisabled("Number of  updates: %d", times.num_of_updates);
 		float width = ImGui::GetContentRegionAvailWidth();
 		
-		ImGui::PlotHistogram("##UPDATES",times.update.data(),times.update.size()/8, 0,nullptr,0,times.consts.target*0.1f,ImVec2(width,10*sqrtf(width)));
+		ImGui::PlotHistogram("##UPDATES",times.update.data(),times.update.size()/8, 0,nullptr,0,times.consts.target,ImVec2(width,10*sqrtf(width)));
 		
 		if(ImGui::BeginChild("Time prediction vector", ImVec2(0, 260)))
 		{

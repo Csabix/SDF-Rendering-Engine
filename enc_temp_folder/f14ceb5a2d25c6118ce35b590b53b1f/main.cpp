@@ -165,6 +165,7 @@ int main( int argc, char* args[] )
 				times.learned_update_diff = glm::clamp<int>(times.learned_update_diff, -2, 0);
 			}
 
+
 			times.cpu_gpu_time_err = glm::mix<float>(times.cpu_measured_time - times.total, times.cpu_gpu_time_err, times.consts.learning_rate*0);
 		}	//end of rendering loop
 		glcheck("Before Cleanup");

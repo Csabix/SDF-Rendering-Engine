@@ -64,6 +64,7 @@ void GUI::DebugWindow::ShowSwichOptions()
 	float width = ImGui::GetContentRegionAvailWidth();
 	int tmpi; float tmpf;
 	ImGui::PushItemWidth(-25.f - width*0.2f);
+	bool toupdate = false;
 
 	if(ImGui::CollapsingHeader("Tracing Options", nullptr, false, false))
 	{
@@ -93,19 +94,20 @@ void GUI::DebugWindow::ShowSwichOptions()
 		ImGui::PopFont();
 		bool l = false;
 		glm::vec3 eye = camera.GetEye();
-		l = l || ImGui::DragFloat3("Eye", &eye.x, 0.1f, 0, 0, "%.4f");
+		l |= ImGui::DragFloat3("Eye", &eye.x, 0.1f, 0, 0, "%.4f");
 		glm::vec3 at = camera.GetAt();
-		l = l || ImGui::DragFloat3("At", &at.x, 0.1f, 0, 0, "%.4f");
+		l |= ImGui::DragFloat3("At", &at.x, 0.1f, 0, 0, "%.4f");
 		glm::vec3 up = camera.GetUp();
-		l = l || ImGui::DragFloat3("Up", &up.x, 0.1f, 0, 0, "%.4f");
-		if(l) { camera.SetView(eye, at, up); iternum = 0; }
+		l |= ImGui::DragFloat3("Up", &up.x, 0.1f, 0, 0, "%.4f");
+		if(l) camera.SetView(eye, at, up);
+		toupdate |= l;
 
 		float speed = camera.GetSpeed();
 		ImGui::PushItemWidth(width*0.4f);
 		ImGui::DragFloat("Speed", &speed, 0.1f, 0, 1000, "%.1f");
 		camera.SetSpeed(speed);
 		ImGui::PopItemWidth();		ImGui::SameLine();
-		ImGui::DragFloat("Fow multipier", &view.fow_mult, 0.01f, 0.02f, 100, "%.2f");
+		toupdate |= ImGui::DragFloat("Fow multipier", &view.fow_mult, 0.01f, 0.02f, 100, "%.2f");
 
 		ImGui::Separator();
 
@@ -115,12 +117,12 @@ void GUI::DebugWindow::ShowSwichOptions()
 		static bool relative_to_camera = false;
 		static glm::vec3 light_pos = glm::vec3(2);
 
-		ImGui::DragFloat3("Position##Light", (relative_to_camera ? &light_pos.x : &uniforms.shadows.light_pos.x), 0.1f);
+		toupdate |= ImGui::DragFloat3("Position##Light", (relative_to_camera ? &light_pos.x : &uniforms.shadows.light_pos.x), 0.1f);
 		if(relative_to_camera) uniforms.shadows.light_pos = eye + light_pos;
 
 		ImGui::Checkbox("Relative to camera", &relative_to_camera);
 		ImGui::SameLine();
-		ImGui::DragFloat("Radius##Light", &uniforms.shadows.light_radius, 0.01f, 0.f, 10000, "%.2f");
+		toupdate |= ImGui::DragFloat("Radius##Light", &uniforms.shadows.light_radius, 0.01f, 0.f, 10000, "%.2f");
 		ImGui::PushItemWidth(width*0.4f);
 		ImGui::DragFloat("Decay##Light", &uniforms.material.light_decay, 0.001f, 0, uniforms.material.light_strength, "%.3f");
 		ImGui::PopItemWidth();		ImGui::SameLine();
@@ -131,9 +133,9 @@ void GUI::DebugWindow::ShowSwichOptions()
 		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[2]);
 		ImGui::TextDisabled("Ambient Occulution");
 		ImGui::PopFont();	ImGui::SameLine(width*0.4f);
-		ImGui::InputInt("Ambient##AO", &ambient.start_iternum);
+		ImGui::InputInt("Ambient start##AO", &ambient.start_iternum);
 		ImGui::Combo("Algorithm##AO", &ambient.algorithm, "No Ambient Occulution\0Progressive AO\0");
-		ImGui::DragFloat("Radius##AO", &uniforms.ambient_occolution.radius, 0.01f, 0, 10000, "%.2f");
+		toupdate |= ImGui::DragFloat("Radius##AO", &uniforms.ambient_occolution.radius, 0.01f, 0, 10000, "%.2f");
 		ImGui::DragFloat("Strength##AO", &uniforms.ambient_occolution.strength, 0.01f, 0, 10000, "%.2f");
 		ImGui::Separator();
 
@@ -160,4 +162,5 @@ void GUI::DebugWindow::ShowSwichOptions()
 		ImGui::DragFloat("Light Strength", &uniforms.material.light_strength, 0.1f, 0, 10000, "%.2f");
 	}
 	ImGui::PopItemWidth();
+	if (toupdate) iternum = 0;
 }

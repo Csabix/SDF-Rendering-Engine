@@ -140,7 +140,7 @@ void CMyApp::PresentationUpdate()
 {
 	start_time = SDL_GetTicks()/1000.f;
 	uniforms.algorithms.shadow = Uniforms::SHADOW_4;
-	switch(presentation)
+	switch (presentation)
 	{
 	case 0: case 1:
 		editor.Open("Shaders/SDF/csg.frag");
@@ -149,13 +149,15 @@ void CMyApp::PresentationUpdate()
 		debug.ambient.start_iternum = 10;
 		uniforms.shadows.light_pos = glm::vec3(0.58, 19.4, 26);
 		uniforms.shadows.light_radius = 3;
+		debug.view.fow_mult = 1.f;
 		break;
 	case 2:
 		editor.Open("Shaders/SDF/aprajafalva.frag");
-		editor.RebuildCompShortcut();		
+		editor.RebuildCompShortcut();
 		uniforms.shadows.step_multipier = 1;
 		uniforms.shadows.light_pos = glm::vec3(18.6f, -0.7f, 3.3f);
 		uniforms.shadows.light_radius = 1;
+		debug.view.fow_mult = 1.f;
 		break;
 	case 3:
 		editor.Open("Shaders/SDF/metasdf.frag");
@@ -163,16 +165,49 @@ void CMyApp::PresentationUpdate()
 		uniforms.shadows.step_multipier = 0.5;
 		uniforms.shadows.light_radius = 0.5;
 		uniforms.shadows.light_pos = glm::vec3(0.053, 2.149, 1.101);
+		debug.view.fow_mult = 1.f;
 		break;
 	case 4: case 5: case 6: case 7:
 		editor.Open("Shaders/SDF/mandelbulb_iq.frag");
 		editor.RebuildCompShortcut();
-		uniforms.shadows.light_pos = glm::vec3(18.6f, -0.7f, 3.3f);
+		//uniforms.shadows.light_pos = glm::vec3(18.6f, -0.7f, 3.3f);
+		uniforms.shadows.light_pos = glm::vec3(14.1f, 2.3f, 10.4f);
 		cam.LookAt(glm::vec3(0));
-		uniforms.shadows.step_multipier = 1;
-		uniforms.shadows.light_radius = 0.5;
+		uniforms.shadows.step_multipier = 0.07;
+		uniforms.shadows.light_radius = 0.0;
+		uniforms.algorithms.shadow = Uniforms::ALGORITHM::SHADOW_2;
+		debug.view.fow_mult = 1.f;
 		break;
-
+	case -1:
+		editor.Open("Shaders/SDF/mandelbulb_iq.frag");
+		editor.RebuildCompShortcut();
+		uniforms.shadows.light_pos = glm::vec3(14.1f, 2.3f, 10.4f);
+		uniforms.shadows.step_multipier = 0.07;
+		uniforms.shadows.light_radius = 0.0;
+		uniforms.algorithms.shadow = Uniforms::ALGORITHM::SHADOW_2;
+		cam.SetView({ -0.4472f, 0.8678f, 0.5546f }, { -0.5273f, 0.0768f,-0.3674f }, { 0.f,0.f,1.f });
+		debug.view.fow_mult = 1.42f;
+		break;
+	case -2:
+		editor.Open("Shaders/SDF/aprajafalva.frag");
+		editor.RebuildCompShortcut();
+		uniforms.shadows.light_pos = glm::vec3(18.6f, -0.7f, 3.3f);
+		uniforms.shadows.step_multipier = 0.07;
+		uniforms.shadows.light_radius = 1.5;
+		uniforms.algorithms.shadow = Uniforms::ALGORITHM::SHADOW_2;
+		cam.SetView({ 15.0908f, 14.8834f, 10.8357f }, { 16.0383f, 4.6873f, 6.9545f }, { 0.f,0.f,1.f });
+		debug.view.fow_mult = 1.22f;
+		break;
+	case -3:
+		editor.Open("Shaders/SDF/csg.frag");
+		editor.RebuildCompShortcut();
+		uniforms.shadows.step_multipier = 0.1;
+		debug.ambient.start_iternum = 10;
+		uniforms.shadows.light_pos = glm::vec3(0.58, 19.4, 26);
+		uniforms.shadows.light_radius = 3;
+		cam.SetView({ -67.1269f, 87.4872f, 193.8971f }, { -63.6434f, 83.2028f, 184.4403f }, { 0.f,0.f,1.f });
+		debug.view.fow_mult = 0.16f;
+		break;
 	}
 	debug.times.optimize = true;
 	debug.pause = false;
@@ -303,7 +338,8 @@ void CMyApp::PrezentationRender()
 			float x = glm::smoothstep<float>(0, 1, powf(t / F, 0.2f));
 			float fi = (float)(M_PI / 4.0);
 			glm::vec3 a = glm::vec3(2.5*cos(fi), 2.5*sin(fi), 2.0);
-			glm::vec3 b = glm::vec3(0.41, 0.33, 0.41)*1.05f;
+			//glm::vec3 b = glm::vec3(0.41, 0.33, 0.41)*1.05f;
+			glm::vec3 b = glm::vec3(0.4067, 0.3241, 0.4143);
 			glm::vec3 eye = a*(1 - x) + b*x;
 			cam.SetView(eye, cam.GetAt(), cam.GetUp());
 			iternum = 0;
@@ -317,7 +353,8 @@ void CMyApp::PrezentationRender()
 		if(t < F)
 		{
 			float x;
-			glm::vec3 a = glm::vec3(0.41, 0.33, 0.41)*1.05f;
+			//glm::vec3 a = glm::vec3(0.41, 0.33, 0.41)*1.05f;
+			glm::vec3 a = glm::vec3(0.4067, 0.3241, 0.4143);
 			glm::vec3 b = glm::vec3(2.5);
 			glm::vec3 c = glm::vec3(-0.37, 0.14, 1.12)*1.025f;
 			x = glm::smoothstep<float>(0, 1, powf(t / F, 2));

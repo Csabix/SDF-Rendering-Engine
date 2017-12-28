@@ -28,16 +28,17 @@ namespace GUI
 				const float fps60ms = 16.0;
 				const float start_value = fps60ms;
 				const int N = 512;					//data exists until this point
-				double target = fps60ms*2;			//node framerate is 30 fps
+				double target = fps60ms;			//node framerate is 30 fps
 				const float learning_rate = 0.2;	//0-1: smaller value means more recent weights more
 			} consts;
 			/// last value holds the average of the rest:		update[min(N-1,i)] ...
-			std::vector<float> update = std::vector<float>(consts.N, consts.start_value*0.8);
+			std::vector<float> update = std::vector<float>(consts.N, consts.start_value*0.2);
 			float render = consts.start_value*0.2;
 			float total = consts.start_value;
 			float sum_of_updates = 0.0;
 			float cpu_measured_time = 16.0;
 			float cpu_gpu_time_err = 0.0;
+			int learned_update_diff = 0;
 		} times;
 
 		int &iternum;
@@ -52,10 +53,15 @@ namespace GUI
 
 		struct	//functions
 		{
-			LinesFunction resolution_multipier = LinesFunction("Iteration -> Resolution multipier", { {0.f, 0.4f},{2.f,0.8f}, {4.f, 1.f} });
-			LinesFunction spheretrace_stepcount = LinesFunction("Iteration -> Sphere-trace stepcount", { {0.f, 35.f }, {5.f, 30.f}, {15.f, 2.f} });
-			LinesFunction shadow_stepcount = LinesFunction("Iteration -> Shadow stepcount",{ { 0.f, 0.f }, { 40.f, 2.f }});
-			LinesFunction user_itercount = LinesFunction("Iteration -> User Itercount", { {0, 7}, {35, 16} });
+			LinesFunction resolution_multipier = LinesFunction("Iteration -> Resolution multipier",
+					{ {0.f, 0.5f}, {1.f, 1.f} });
+					//{ {0.f, 0.4f},{1.f,0.7f},{2.f,0.9f}, {3.f, 1.f} });
+			LinesFunction spheretrace_stepcount = LinesFunction("Iteration -> Sphere-trace stepcount",
+					{ {0.f, 25.f }, {3.f, 25.f}, {7.f, 10.f}, {15.f, 2.f} });
+			LinesFunction shadow_stepcount = LinesFunction("Iteration -> Shadow stepcount",
+					{ { 0.f, 0.f },{ 4.f, 0.f }, { 10.f, 30.f }, { 40.f, 2.f }});
+			LinesFunction user_itercount = LinesFunction("Iteration -> User Itercount",
+					{ {0, 8}, {5, 25} });
 		} functions;
 
 		struct	//gpu_states

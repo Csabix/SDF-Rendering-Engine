@@ -45,6 +45,12 @@
     <Filter Include="GUI\TextEditor">
       <UniqueIdentifier>{1d4d95e7-1084-4c3c-a1b3-55a2183db625}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{b4ec51c4-3ed6-4b58-ac53-cf2fb1dad932}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\SphereTrace">
+      <UniqueIdentifier>{dad25372-1905-49ed-af27-4f99534d0606}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -206,5 +212,29 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="Shaders\header.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="Shaders\main.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="Shaders\primitives.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="Shaders\shade.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="Shaders\SphereTrace\spheretrace_1.frag">
+      <Filter>shaders\SphereTrace</Filter>
+    </None>
+    <None Include="Shaders\SphereTrace\spheretrace_2.frag">
+      <Filter>shaders\SphereTrace</Filter>
+    </None>
+    <None Include="Shaders\SphereTrace\spheretrace_3.frag">
+      <Filter>shaders\SphereTrace</Filter>
+    </None>
+    <None Include="spheretrace_4.frag">
+      <Filter>shaders\SphereTrace</Filter>
+    </None>
   </ItemGroup>
 </Project>
