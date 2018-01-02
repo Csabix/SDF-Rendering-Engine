@@ -141,7 +141,6 @@ int main( int argc, char* args[] )
 			else if(!app.debug.pause)
 			{
 				gpu_first_timer.Start(); app.Update(); gpu_first_timer.Stop();			//UPDATE #1
-				gpu_first_timer.swap();
 
 				float first_frame_time = gpu_first_timer.GetLastDeltaMilli();
 				times.sum_of_updates = first_frame_time;
@@ -161,8 +160,6 @@ int main( int argc, char* args[] )
 					for (int i=0; i < to_update ; ++i)
 						app.Update();
 					gpu_update_timer.Stop();
-					gpu_update_timer.swap();
-
 					float sum_time = gpu_update_timer.GetLastDeltaMilli();
 					float avg_updated = sum_time / (float) to_update;
 					for (int i = start_iternum; i < start_iternum + to_update; ++i)
@@ -182,6 +179,8 @@ int main( int argc, char* args[] )
 			ImGui::Render();
 
 			gpu_render_timer.Stop();
+			gpu_first_timer.swap();
+			gpu_update_timer.swap();
 			gpu_render_timer.swap();
 
 			SDL_GL_SwapWindow(win);

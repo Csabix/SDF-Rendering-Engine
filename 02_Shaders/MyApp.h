@@ -57,13 +57,13 @@ public:
 public:
 	void runupdate(const std::vector<float>& res_mults, const std::vector<int>& iters, Uniforms::ALGORITHM st_algs);
 	//performance test
-	float perftest(const std::vector<float>& res_mults, const std::vector<int>& iters, Uniforms::ALGORITHM st_algs);
+	void perftest(const std::vector<float>& res_mults, const std::vector<int>& iters, Uniforms::ALGORITHM st_algs, int curr_perf_timer);
 	double calcerror(); // discard time measurement if you use calcerror
-	void measure_performance(float ratio);
+	void measure_performance();
 	void warmup_run();
 	void measure_error();
-	GPU_Timer perf_timer[8];
-	int curr_perf_timer = 0;
+	
+	GPU_Timer perf_gpu_timers[10];
 };
 
 //Possible Improovements:

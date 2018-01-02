@@ -188,16 +188,6 @@ void CMyApp::PresentationUpdate()
 		cam.SetView({ -0.4472f, 0.8678f, 0.5546f }, { -0.5273f, 0.0768f,-0.3674f }, { 0.f,0.f,1.f });
 		debug.view.fow_mult = 1.42f;
 		break;
-	/*case -2:
-		editor.Open("Shaders/SDF/aprajafalva.frag");
-		editor.RebuildCompShortcut();
-		uniforms.shadows.light_pos = glm::vec3(18.6f, -0.7f, 3.3f);
-		uniforms.shadows.step_multipier = 0.07;
-		uniforms.shadows.light_radius = 1.5;
-		uniforms.algorithms.shadow = Uniforms::ALGORITHM::SHADOW_2;
-		cam.SetView({ 15.0908f, 14.8834f, 10.8357f }, { 16.0383f, 4.6873f, 6.9545f }, { 0.f,0.f,1.f });
-		debug.view.fow_mult = 1.22f;
-		break;*/
 	case -3:
 		editor.Open("Shaders/SDF/csg.frag");
 		editor.RebuildCompShortcut();
@@ -207,6 +197,17 @@ void CMyApp::PresentationUpdate()
 		uniforms.shadows.light_radius = 3;
 		cam.SetView({ -67.1269f, 87.4872f, 193.8971f }, { -63.6434f, 83.2028f, 184.4403f }, { 0.f,0.f,1.f });
 		debug.view.fow_mult = 0.16f;
+		break;
+	case -4:
+		editor.Open("Shaders/SDF/aprajafalva2.frag");
+		editor.RebuildCompShortcut();
+		uniforms.shadows.light_pos = glm::vec3(18.6f, -0.7f, 3.3f);
+		uniforms.shadows.step_multipier = 0.07;
+		uniforms.shadows.light_radius = 1.5;
+		uniforms.algorithms.shadow = Uniforms::ALGORITHM::SHADOW_2;
+		//cam.SetView({ 15.0908f, 14.8834f, 10.8357f }, { 16.0383f, 4.6873f, 6.9545f }, { 0.f,0.f,1.f });
+		cam.SetView({ -179.1958f, -132.4294f, 60.1329f}, { -79.6353, -71.2055, -17.9894}, { 0.f,0.f,1.f });
+		debug.view.fow_mult = 1.22f;
 		break;
 	}
 	debug.times.optimize = true;
@@ -416,10 +417,9 @@ void CMyApp::runupdate(const std::vector<float>& res_mults, const std::vector<in
 	}
 }
 
-float CMyApp::perftest(const std::vector<float>& res_mults, const std::vector<int>& iters, Uniforms::ALGORITHM st_algs)
+void CMyApp::perftest(const std::vector<float>& res_mults, const std::vector<int>& iters, Uniforms::ALGORITHM st_algs, int curr_perf_timer)
 {
 	assert(res_mults.size() == iters.size());
-	this->iternum = 0;
 	std::vector<glm::vec2> res, its;
 	for (int i = 0; i < res_mults.size(); ++i)
 	{
@@ -429,16 +429,22 @@ float CMyApp::perftest(const std::vector<float>& res_mults, const std::vector<in
 	debug.functions.resolution_multipier = GUI::LinesFunction("Iteration -> Resolution multipier", res);
 	debug.functions.spheretrace_stepcount = GUI::LinesFunction("Iteration -> Sphere-trace stepcount", its);
 	uniforms.algorithms.spheretrace = st_algs;
-	this->perf_timer[curr_perf_timer].Start();
+
+	perf_gpu_timers[curr_perf_timer].Start();
+
+	this->iternum = 0;	//first run
 	for (int i = 0; i < res_mults.size(); ++i)
-	{
 		this->Update();
-	}
-	this->perf_timer[curr_perf_timer].Stop();
-	float retT = this->perf_timer[curr_perf_timer].GetLastDeltaMilli();
-	this->perf_timer[curr_perf_timer].swap();
-	curr_perf_timer = (curr_perf_timer + 1) % 8;
-	return retT;
+
+	this->iternum = 0; //another run
+	for (int i = 0; i < res_mults.size(); ++i)
+		this->Update();
+
+	this->iternum = 0; //third run
+	for (int i = 0; i < res_mults.size(); ++i)
+		this->Update();
+
+	perf_gpu_timers[curr_perf_timer].Stop();
 }
 
 double CMyApp::calcerror()
@@ -461,10 +467,26 @@ double CMyApp::calcerror()
 	return sum / static_cast<double>(debug.reference_image.size());
 }
 
-void CMyApp::measure_performance(float ratio)
+void CMyApp::measure_performance()
 {
-	for (PerfData &pdat : debug.perfdata)
-		pdat.render_time_ms = glm::mix<float>(perftest(pdat.resolutions, pdat.iters, static_cast<Uniforms::ALGORITHM>(pdat.alg)), pdat.render_time_ms, ratio);
+	int N = debug.perfdata.size();
+	for (int bath_start = 0; bath_start < N; bath_start+=10)
+	{
+		for (int i = bath_start; i < std::min(bath_start + 10, N); ++i)
+		{
+			perftest(debug.perfdata[i].resolutions, debug.perfdata[i].iters, static_cast<Uniforms::ALGORITHM>(debug.perfdata[i].alg), i%10);
+			perf_gpu_timers[i%10].swap();
+			if (bath_start != 0) // pervious batch
+			{
+				debug.perfdata[i-10].render_time_ms = perf_gpu_timers[i%10].GetLastDeltaMilli();
+			}
+		}
+	}
+	for (int i = N; i < N + 10; ++i)
+	{
+		perf_gpu_timers[i%10].swap(); // last batch
+		debug.perfdata[i-10].render_time_ms = perf_gpu_timers[i%10].GetLastDeltaMilli();
+	}
 }
 
 void CMyApp::warmup_run()
@@ -477,7 +499,7 @@ void CMyApp::measure_error()
 {
 	for (PerfData &pdat : debug.perfdata)
 	{
-		pdat.other_time_ms = perftest(pdat.resolutions, pdat.iters, static_cast<Uniforms::ALGORITHM>(pdat.alg));
+		runupdate(pdat.resolutions, pdat.iters, static_cast<Uniforms::ALGORITHM>(pdat.alg));
 		pdat.error = calcerror();
 	}
 }

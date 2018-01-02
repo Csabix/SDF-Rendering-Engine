@@ -1,5 +1,4 @@
 #define TRACE_OR 1.6
-#define SDF(r,t) sdf(RAY(r,t), r.v) - (t) * cam_pixel_growth
 
 layout(index = 0 + 2) subroutine(SphereTrace)
 vec3 spheretrace_2(const in Ray r, in float t, float ft)
@@ -20,7 +19,7 @@ vec3 spheretrace_2(const in Ray r, in float t, float ft)
 			t += dt;
 			ft = SDF(r,t);
 		}
-		if(ft < t * cam_pixel_growth)
+		if(ft < t * cam_pixel_growth*0.2)
 			return vec3(t-dt, SDF(r, t-dt), float(i));
 		pft = ft;
 	}

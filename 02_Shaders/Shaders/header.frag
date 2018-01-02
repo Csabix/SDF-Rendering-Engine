@@ -8,6 +8,7 @@ layout(location = 2) out vec4 out_linear_2;
 
 struct Ray{ vec3 v, p; };
 #define RAY(r,t) (r.v*(t)+r.p)	//point on a ray
+#define SDF(r,t) 0.94*sdf(RAY(r,t), r.v) - (t) * cam_pixel_growth
 
 //SUBROUTINES
 subroutine vec3 SphereTrace(const in Ray r, in float t, in float ft);

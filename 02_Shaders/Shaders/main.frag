@@ -22,11 +22,17 @@ void main()
 	vec3 depth;
 	
 	float pixel_size = t * cam_pixel_growth;
+	t-=pixel_size;
 
-	if(ft < 1000 && (iternum == 0 || ft > pixel_size*0.5))
-					depth = spheretrace(r, t, ft);
-	else			depth = vec3(t, ft, 0);
-	
+	if(ft < 1000 && (iternum == 0 || ft > pixel_size*0.1))
+	{
+		depth = spheretrace(r, t, ft);
+	}
+	else
+	{
+		depth = vec3(t, ft, 0);
+	}
+
 	pixel_size = depth.x * cam_pixel_growth;
 	bool depth_changed = depth.x - t > pixel_size*50;
 			

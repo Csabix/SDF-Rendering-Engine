@@ -16,7 +16,6 @@ vec2 sphere_step(const in Ray r, in vec2 c0, in vec2 c1)
 }*/
 
 #define NEXT_R(r_0, r_1, d) STEP_SIZE_REDUCTION*(- r_1 * (r_0 - r_1 - d)/(r_0 - r_1 + d))
-#define SDF(r,t) sdf(RAY(r,t), r.v) - (t) * cam_pixel_growth
 layout(index = 0 + 3) subroutine(SphereTrace)
 vec3 spheretrace_3(const in Ray r, in float t, float ft)
 {	//-(r_1 * (d-r_0+r_1))/(-d-r_0+r_1)
@@ -37,7 +36,7 @@ vec3 spheretrace_3(const in Ray r, in float t, float ft)
 			t += dt;
 			ft = SDF(r,t);
 		}
-		if(ft < 0)
+		if(ft < t * cam_pixel_growth*0.2)
 			return vec3(t - dt, SDF(r, t - dt), float(i));
 		pft = ft;
 	}
