@@ -48,7 +48,6 @@ uniform float	c_mix_coeff = 0;
 uniform vec3  cam_eye = vec3(2);
 uniform vec3  cam_at  = vec3(0);
 uniform vec3  cam_up  = vec3(0 , 0 , 1);
-uniform float cam_pixel_growth = SQRT2 / length(vec2(640 , 480)) ;
 
 uniform int sw_stepcount = 10;
 uniform vec3 light_pos = vec3(30,30,30);

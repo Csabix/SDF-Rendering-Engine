@@ -23,7 +23,7 @@ void main()
 	
 	float pixel_size = t * cam_pixel_growth;
 
-	if(ft < 1000 && (iternum == 0 || ft > pixel_size || ft < pixel_size*0.5))
+	if(ft < 1000 && (iternum == 0 || ft > pixel_size*0.5))
 					depth = spheretrace(r, t, ft);
 	else			depth = vec3(t, ft, 0);
 	

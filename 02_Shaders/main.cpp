@@ -11,6 +11,7 @@
 int main( int argc, char* args[] )
 {
 	//atexit([]() { system("pause"); });
+
 	glassert(SDL_Init(SDL_INIT_VIDEO) != -1);
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -50,6 +51,23 @@ int main( int argc, char* args[] )
 			ImGui::GetIO().Fonts->AddFontFromFileTTF("Consolas.ttf", i*2+11);
 		}
 		CMyApp app;						glcheck("Main Error");
+
+		// PERFORMANCE TEST DATA
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "One resolution, basic algorithm", Uniforms::ALGORITHM::ST_1 , {1.f}, {test_iterfun(i)} });
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "One resolution, relaxed algorithm", Uniforms::ALGORITHM::ST_2 , {1.f}, {test_iterfun(i)} });
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "One resolution, enhanced algorithm", Uniforms::ALGORITHM::ST_3 , {1.f}, {test_iterfun(i)} });
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "Two resolution, basic algorithm", Uniforms::ALGORITHM::ST_1 , {0.5f,1.f}, {test_iterfun(i)/2,test_iterfun(i)/2} });
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "Two resolution, relaxed algorithm", Uniforms::ALGORITHM::ST_2 , {0.5f,1.f}, {test_iterfun(i)/2,test_iterfun(i)/2} });
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "Two resolution, enhanced algorithm", Uniforms::ALGORITHM::ST_3 , {0.5f,1.f}, {test_iterfun(i)/2,test_iterfun(i)/2} });
+
+		// =====================
+
 		glassert(app.Init());			glcheck("Init Error");
 		//Test Render (the very first frame)
 		ImGui_ImplSdlGL3_NewFrame(win);	glcheck("ImGui Error");
@@ -95,7 +113,17 @@ int main( int argc, char* args[] )
 			ImGui_ImplSdlGL3_NewFrame(win);
 
 			auto &times = app.debug.times;
-			if(!app.debug.pause)
+			if (app.debug.measure_performance)
+			{
+				app.measure_error();
+				app.measure_performance(1);
+				app.measure_performance(1);
+				app.measure_performance(1); //start measurement
+				app.measure_performance(0.5); // avarage of two
+				app.debug.GenPerfStrings();
+				app.debug.measure_performance = false;
+			}
+			else if(!app.debug.pause)
 			{
 				gpu_first_timer.Start(); app.Update(); gpu_first_timer.Stop();			//UPDATE #1
 
@@ -141,7 +169,6 @@ int main( int argc, char* args[] )
 			gpu_render_timer.swap();
 
 			SDL_GL_SwapWindow(win);
-
 
 			times.render = glm::mix<float>((float)gpu_render_timer.GetLastDeltaMilli(), times.render, times.consts.learning_rate);
 			times.total = times.sum_of_updates + times.render;

@@ -221,7 +221,6 @@
     <None Include="Shaders\SphereTrace\spheretrace_1.frag" />
     <None Include="Shaders\SphereTrace\spheretrace_2.frag" />
     <None Include="Shaders\SphereTrace\spheretrace_3.frag" />
-    <None Include="spheretrace_4.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

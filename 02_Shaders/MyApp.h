@@ -10,6 +10,7 @@
 #include "Uniforms.h"
 #include "DebugWindow.h"
 #include "TextEditor.h"
+#include "gTimer.h"
 
 class CMyApp
 {
@@ -53,6 +54,16 @@ public:
 
 	//other state variables
 	int iternum = 0;
+public:
+	void runupdate(const std::vector<float>& res_mults, const std::vector<int>& iters, Uniforms::ALGORITHM st_algs);
+	//performance test
+	float perftest(const std::vector<float>& res_mults, const std::vector<int>& iters, Uniforms::ALGORITHM st_algs);
+	double calcerror(); // discard time measurement if you use calcerror
+	void measure_performance(float ratio);
+	void warmup_run();
+	void measure_error();
+	GPU_Timer perf_timer[8];
+	int curr_perf_timer = 0;
 };
 
 //Possible Improovements:

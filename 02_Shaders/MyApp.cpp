@@ -178,7 +178,7 @@ void CMyApp::PresentationUpdate()
 		uniforms.algorithms.shadow = Uniforms::ALGORITHM::SHADOW_2;
 		debug.view.fow_mult = 1.f;
 		break;
-	case -1:
+	case -2:
 		editor.Open("Shaders/SDF/mandelbulb_iq.frag");
 		editor.RebuildCompShortcut();
 		uniforms.shadows.light_pos = glm::vec3(14.1f, 2.3f, 10.4f);
@@ -188,7 +188,7 @@ void CMyApp::PresentationUpdate()
 		cam.SetView({ -0.4472f, 0.8678f, 0.5546f }, { -0.5273f, 0.0768f,-0.3674f }, { 0.f,0.f,1.f });
 		debug.view.fow_mult = 1.42f;
 		break;
-	case -2:
+	/*case -2:
 		editor.Open("Shaders/SDF/aprajafalva.frag");
 		editor.RebuildCompShortcut();
 		uniforms.shadows.light_pos = glm::vec3(18.6f, -0.7f, 3.3f);
@@ -197,7 +197,7 @@ void CMyApp::PresentationUpdate()
 		uniforms.algorithms.shadow = Uniforms::ALGORITHM::SHADOW_2;
 		cam.SetView({ 15.0908f, 14.8834f, 10.8357f }, { 16.0383f, 4.6873f, 6.9545f }, { 0.f,0.f,1.f });
 		debug.view.fow_mult = 1.22f;
-		break;
+		break;*/
 	case -3:
 		editor.Open("Shaders/SDF/csg.frag");
 		editor.RebuildCompShortcut();
@@ -393,5 +393,91 @@ void CMyApp::PrezentationRender()
 		}
 	}
 	break;
+	}
+}
+
+
+void CMyApp::runupdate(const std::vector<float>& res_mults, const std::vector<int>& iters, Uniforms::ALGORITHM st_algs)
+{
+	assert(res_mults.size() == iters.size());
+	this->iternum = 0;
+	std::vector<glm::vec2> res, its;
+	for (int i = 0; i < res_mults.size(); ++i)
+	{
+		res.emplace_back(static_cast<float>(i), res_mults[i]);
+		its.emplace_back(static_cast<float>(i), iters[i]);
+	}
+	debug.functions.resolution_multipier = GUI::LinesFunction("Iteration -> Resolution multipier", res);
+	debug.functions.spheretrace_stepcount = GUI::LinesFunction("Iteration -> Sphere-trace stepcount", its);
+	uniforms.algorithms.spheretrace = st_algs;
+	for (int i = 0; i < res_mults.size(); ++i)
+	{
+		this->Update();
+	}
+}
+
+float CMyApp::perftest(const std::vector<float>& res_mults, const std::vector<int>& iters, Uniforms::ALGORITHM st_algs)
+{
+	assert(res_mults.size() == iters.size());
+	this->iternum = 0;
+	std::vector<glm::vec2> res, its;
+	for (int i = 0; i < res_mults.size(); ++i)
+	{
+		res.emplace_back(static_cast<float>(i), res_mults[i]);
+		its.emplace_back(static_cast<float>(i), iters[i]);
+	}
+	debug.functions.resolution_multipier = GUI::LinesFunction("Iteration -> Resolution multipier", res);
+	debug.functions.spheretrace_stepcount = GUI::LinesFunction("Iteration -> Sphere-trace stepcount", its);
+	uniforms.algorithms.spheretrace = st_algs;
+	this->perf_timer[curr_perf_timer].Start();
+	for (int i = 0; i < res_mults.size(); ++i)
+	{
+		this->Update();
+	}
+	this->perf_timer[curr_perf_timer].Stop();
+	float retT = this->perf_timer[curr_perf_timer].GetLastDeltaMilli();
+	this->perf_timer[curr_perf_timer].swap();
+	curr_perf_timer = (curr_perf_timer + 1) % 8;
+	return retT;
+}
+
+double CMyApp::calcerror()
+{
+	const GPUState *gpus = gpu.current; //already switched
+	GLuint texid = gpus->nearest_0.get();
+	int w = gpus->nearest_0.GetW(), h = gpus->nearest_0.GetH();
+
+	debug.stats.pixeldata.resize(w*h);
+	glBindTexture(GL_TEXTURE_2D, texid);
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, debug.stats.pixeldata.data());
+	assert(debug.stats.pixeldata.size() == debug.reference_image.size());
+	double sum = 0;
+	for (int i = 0; i < debug.reference_image.size(); ++i)
+	{
+		double a = static_cast<double>(debug.reference_image[i]);
+		double b = static_cast<double>(debug.stats.pixeldata[i].x);
+		sum += (a - b)*(a - b);
+	}
+	return sum / static_cast<double>(debug.reference_image.size());
+}
+
+void CMyApp::measure_performance(float ratio)
+{
+	for (PerfData &pdat : debug.perfdata)
+		pdat.render_time_ms = glm::mix<float>(perftest(pdat.resolutions, pdat.iters, static_cast<Uniforms::ALGORITHM>(pdat.alg)), pdat.render_time_ms, ratio);
+}
+
+void CMyApp::warmup_run()
+{
+	for (PerfData &pdat : debug.perfdata)
+		runupdate(pdat.resolutions, pdat.iters, static_cast<Uniforms::ALGORITHM>(pdat.alg));
+}
+
+void CMyApp::measure_error()
+{
+	for (PerfData &pdat : debug.perfdata)
+	{
+		pdat.other_time_ms = perftest(pdat.resolutions, pdat.iters, static_cast<Uniforms::ALGORITHM>(pdat.alg));
+		pdat.error = calcerror();
 	}
 }

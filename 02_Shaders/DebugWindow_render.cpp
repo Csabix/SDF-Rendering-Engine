@@ -1,5 +1,7 @@
 #include "DebugWindow.h"
 #include "imgui\imgui.h"
+#include "imgui\auto.h"
+#include "FileIO.h"
 //#include "Uniforms.h"
 
 void GUI::DebugWindow::SetSize()
@@ -57,8 +59,65 @@ void GUI::DebugWindow::Resize(int w, int h)
 
 void GUI::DebugWindow::ShowFunctionOptions()
 {
+	if (ImGui::Button("Measure times"))	this->measure_performance = true;
+	static std::string ref_image_path = "C:/Users/Csabix/Documents/Grafika/RawData/csg.bin";
+	ImGui::Auto(ref_image_path, "Ref Img Path");
+	if (ImGui::Button("Load Ref image"))
+	{
+		FileIO::LoadUnformattedData(ref_image_path.data(), reference_image);
+		assert(reference_image.size() % 4 == 0);
+		for (int i = 0; i < reference_image.size() / 4; ++i)
+		{
+			reference_image[i] = reference_image[4 * i]; //first channel only
+		}
+		reference_image.resize(reference_image.size() / 4);
+		reference_image.shrink_to_fit();
+	}
+	ImGui::Auto(this->perfdata, "PerfTimes");
+
+	ImGui::InputTextMultiline("Runtimes", this->text_runtimes);
+
+	ImGui::Separator();
+	
 	functions.resolution_multipier.ChangeFunction();
 	functions.spheretrace_stepcount.ChangeFunction();
 	functions.shadow_stepcount.ChangeFunction();
 	functions.user_itercount.ChangeFunction();
+}
+
+void GUI::DebugWindow::GenPerfStrings()
+{
+	const int test_cnt = 6;
+	text_runtimes = "Rendertimes";
+	for (int i = 0; i < 10; ++i)
+		text_runtimes += "\t" + std::to_string(test_iterfun(i));
+	for (int j = 0; j < test_cnt; ++j)
+	{
+		text_runtimes += '\n';
+		text_runtimes += this->perfdata[j*10].name;
+		for (int i = 0; i < 10; ++i)
+			text_runtimes += "\t" + std::to_string(this->perfdata[j*10 + i].render_time_ms);
+	}
+
+	text_runtimes += "\n\nErrors";
+	for (int i = 0; i < 10; ++i)
+		text_runtimes += "\t" + std::to_string(test_iterfun(i));
+	for (int j = 0; j < test_cnt; ++j)
+	{
+		text_runtimes += '\n';
+		text_runtimes += this->perfdata[j*10].name;
+		for (int i = 0; i < 10; ++i)
+			text_runtimes += "\t" + std::to_string(this->perfdata[j*10 + i].error);
+	}
+
+	text_runtimes += "\n\nOther times";
+	for (int i = 0; i < 10; ++i)
+		text_runtimes += "\t" + std::to_string(test_iterfun(i));
+	for (int j = 0; j < test_cnt; ++j)
+	{
+		text_runtimes += '\n';
+		text_runtimes += this->perfdata[j*10].name;
+		for (int i = 0; i < 10; ++i)
+			text_runtimes += "\t" + std::to_string(this->perfdata[j*10 + i].other_time_ms);
+	}
 }

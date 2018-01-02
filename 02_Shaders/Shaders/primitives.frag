@@ -37,16 +37,24 @@ float torus( vec3 p, vec2 t )
   return length(q)-t.y;
 }
 
-#define konvex_optimize(f, vdf) f	//no optimalization
-//#define konvex_optimize(f, vdf) (abs(vdf) < 0.01 ? f : (vdf < 0 && f > 0 ? 2000 : f/abs(vdf*1.1) ))
+uniform float cam_pixel_growth = SQRT2 / length(vec2(1280 , 760)) ;
 
+//#define konvex_optimize(f, vdf) f	//no optimalization
+//#define konvex_optimize(f, vdf) (abs(vdf) < 0.01 ? f : (vdf < 0 && f > 0 ? 2000 : f/abs(vdf*1.1) ))
+//#define konvex_optimize(f, vdf) ( f < 0 ? f : max(f /(cam_pixel_growth - vdf),f))
+float konvex_optimize(float f, float vdf)
+{
+	if (vdf < 0.01) return f;
+	float s = f /(cam_pixel_growth - vdf);
+	if (s < -0.1) return 2000;
+	return clamp(s,f, 2000);
+}
 //planes
 
 float plane(in vec3 p, in vec3 v, in vec3 n)
 {	//length(n) must be 1
 	float f = dot(p, n);
-	float vf = dot(-v, n);
-	return f;
+	float vf = dot(v, n);
 	return konvex_optimize(f, vf);
 }
 #define planeYZ(p, v) plane(p,v, vec3(1,0,0))
@@ -64,7 +72,10 @@ float sphere(const in vec3 p, const in vec3 v, const in float r)
 float box(const in vec3 p, const in vec3 v, const in vec3 size)
 {
 	vec3 d = abs(p) - size;
-	return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
+	float f = min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
+	float vf = dot(normalize(p-size),v);
+	return konvex_optimize(f, vf);
+	return f;
 }
 float cone( const in vec3 p, const in vec3 v, const in vec2 c )
 {    // c must be normalized

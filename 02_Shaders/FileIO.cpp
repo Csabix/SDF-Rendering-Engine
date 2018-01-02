@@ -114,6 +114,26 @@ bool FileIO::SaveUnformattedData(const char *__restrict path, const char *__rest
 	return true;
 }
 
+bool FileIO::LoadUnformattedData(const char *__restrict path, std::vector<float> &__restrict values, std::ostream *__restrict log)
+{
+	std::ifstream in(path, std::ifstream::binary | std::ifstream::ate);
+	if (!in.is_open())
+	{
+		(log != nullptr ? *log : std::cout) << "Could not Open file : " << path << std::endl;
+		return false;
+	}
+	std::streamsize length = in.tellg();
+	if (length % (sizeof(float)) != 0)
+	{
+		(log != nullptr ? *log : std::cout) << "Wrong type or corrupted data in file : " << path << std::endl;
+		return false;
+	}
+	in.seekg(0);
+	values.resize(length / sizeof(float));
+	in.read(reinterpret_cast<char*>(values.data()), length);
+	in.close();
+}
+
 bool FileIO::OpenFrom(const char *__restrict path, std::vector<char> &__restrict text, std::ostream *__restrict log)
 {
 	std::ifstream in(path, std::ifstream::binary | std::ifstream::ate);

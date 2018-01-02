@@ -9,6 +9,17 @@
 class GPUState; //fwd decl
 class Uniforms; //...
 
+struct PerfData
+{
+	std::string name;
+	int alg;
+	std::vector<float>	resolutions;
+	std::vector<int>	iters;
+	float render_time_ms;
+	float other_time_ms;
+	double error;
+};
+
 namespace GUI
 {
 	class DebugWindow
@@ -44,7 +55,6 @@ namespace GUI
 		int &iternum;
 		Uniforms &uniforms;
 		gCamera &camera;
-
 		struct //ambient
 		{
 			int algorithm = 1;
@@ -107,6 +117,10 @@ namespace GUI
 	public: //private
 		bool turn_pause_to_false = false;
 		bool turn_pause_to_true = false;
+		bool measure_performance = false;
+		std::vector<PerfData> perfdata;
+		std::string text_runtimes;
+		std::vector<float> reference_image;
 		struct
 		{
 			float full_width = 350;	float full_height = 450;
@@ -126,6 +140,7 @@ namespace GUI
 
 		void ShowIterationOptions();
 		void ShowFunctionOptions();
+		void GenPerfStrings();
 		void ShowSwichOptions();
 		void ShowGPUState(int i, const GPUState & gpu, float m);
 		void ColorMappingSettings(int i);
@@ -133,4 +148,10 @@ namespace GUI
 		void DispHistDataCH(int channel);
 		void ShowVisualisationOptions();
 	};
+}
+
+//divisable by 2
+inline int test_iterfun(int i)
+{
+	return 2 << i;
 }

@@ -14,6 +14,7 @@ namespace FileIO
 	bool SaveTo(const char *__restrict path, const char* __restrict text, const size_t = 0, std::ostream *__restrict log = nullptr);
 	bool SaveFormattedData(const char *__restrict path, const float*__restrict values, size_t width, size_t height, size_t stride, std::ostream *__restrict log = nullptr);
 	bool SaveUnformattedData(const char * __restrict path, const char * __restrict values, size_t size, std::ostream * __restrict log = nullptr);
+	bool LoadUnformattedData(const char * __restrict path, std::vector<float> &__restrict values, std::ostream * __restrict log = nullptr);
 	bool OpenFrom(const char *__restrict path, std::vector<char> &__restrict text, std::ostream *__restrict log = nullptr);
 	/*
 	bool loadFileIntoBufferString(const char *  path, BufferString &text);
