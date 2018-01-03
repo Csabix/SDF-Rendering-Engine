@@ -19,5 +19,11 @@ void GPU_Timer::Start()
 void GPU_Timer::Stop()
 {
 	glEndQuery(GL_TIME_ELAPSED);
+	//glGetQueryObjectui64v(queries[act], GL_QUERY_RESULT, &last_delta);
+}
+
+double GPU_Timer::QuerryMillisecs()
+{
 	glGetQueryObjectui64v(queries[act], GL_QUERY_RESULT, &last_delta);
+	return last_delta / 1000000.0f;
 }

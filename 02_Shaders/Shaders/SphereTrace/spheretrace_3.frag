@@ -1,5 +1,5 @@
-//#define STEP_SIZE_REDUCTION 0.95
-#define STEP_SIZE_REDUCTION 0.87
+#define STEP_SIZE_REDUCTION 0.95
+//#define STEP_SIZE_REDUCTION 0.87
 
 //Performs a sphere-step
 // r a ray on wich along the tracing happens
@@ -15,30 +15,24 @@ vec2 sphere_step(const in Ray r, in vec2 c0, in vec2 c1)
 		return vec2();
 }*/
 
-#define NEXT_R(r_0, r_1, d) STEP_SIZE_REDUCTION*(- r_1 * (r_0 - r_1 - d)/(r_0 - r_1 + d))
 layout(index = 0 + 3) subroutine(SphereTrace)
-vec3 spheretrace_3(const in Ray r, in float t, float ft)
-{	//-(r_1 * (d-r_0+r_1))/(-d-r_0+r_1)
-	float pft = 0, dt = 0, nft;
-	for(int i = 0; i < st_stepcount; ++i)
+vec3 spheretrace_3(const in Ray r, in float t, in float ft, const in int maxiters)
+{
+	float rp = 0, rc = ft, rn = 0; //prev, curr, next
+	float di = 0; int k = 0;
+	for(int i=0; i < maxiters; ++i)
 	{
-		//dt = ft * (1 - STEP_SIZE_REDUCTION * (pft - ft - dt)/(pft - ft + dt));
-		dt = ft + NEXT_R(pft, ft, dt);
-		nft = SDF(r,t + dt);
-		if(dt < ft + nft)
+		di = rc + STEP_SIZE_REDUCTION * rc * max( (di - rp + rc) / (di + rp - rc), 0.6);
+		rn = SDF(r, t + di);
+		if(di > rc + rn)
 		{
-			ft = nft;
-			t += dt;
+			di = rc; ++k;
+			rn = SDF(r, t + di);
 		}
-		else
-		{
-			dt = ft;
-			t += dt;
-			ft = SDF(r,t);
-		}
-		if(ft < t * cam_pixel_growth*0.2)
-			return vec3(t - dt, SDF(r, t - dt), float(i));
-		pft = ft;
+		if(IS_CLOSE_TO_SURFACE(rn, t + di))
+			return vec3(t, rc, float(k)/float(i));
+		t += di;
+		rp = rc; rc = rn;
 	}
-	return vec3(t, ft, float(st_stepcount));
+	return vec3(t, rc, float(k)/float(maxiters));
 }

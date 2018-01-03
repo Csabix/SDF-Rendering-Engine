@@ -475,17 +475,17 @@ void CMyApp::measure_performance()
 		for (int i = bath_start; i < std::min(bath_start + 10, N); ++i)
 		{
 			perftest(debug.perfdata[i].resolutions, debug.perfdata[i].iters, static_cast<Uniforms::ALGORITHM>(debug.perfdata[i].alg), i%10);
-			perf_gpu_timers[i%10].swap();
+			perf_gpu_timers[i%10].Swap();
 			if (bath_start != 0) // pervious batch
 			{
-				debug.perfdata[i-10].render_time_ms = perf_gpu_timers[i%10].GetLastDeltaMilli();
+				debug.perfdata[i-10].render_time_ms = perf_gpu_timers[i%10].QuerryMillisecs();
 			}
 		}
 	}
-	for (int i = N; i < N + 10; ++i)
+	for (int i = N; i < N + 10; ++i) // get times for last batch
 	{
-		perf_gpu_timers[i%10].swap(); // last batch
-		debug.perfdata[i-10].render_time_ms = perf_gpu_timers[i%10].GetLastDeltaMilli();
+		perf_gpu_timers[i%10].Swap();
+		debug.perfdata[i-10].render_time_ms = perf_gpu_timers[i%10].QuerryMillisecs();
 	}
 }
 

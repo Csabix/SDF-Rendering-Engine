@@ -1,12 +1,12 @@
 
 layout(index = 0 + 1) subroutine(SphereTrace)
-vec3 spheretrace_1(const in Ray r, in float t, float ft)
+vec3 spheretrace_1(const in Ray r, in float t, in float ft, const in int maxiters)
 {	//pure sphere trace (low step count causes bubbley artifact)
-	for(int i = 0; i < st_stepcount; ++i)
+	for(int i = 0; i < maxiters; ++i)
 	{
 		ft = SDF(r,t);
-		if(ft < t * cam_pixel_growth*0.2) return vec3(t - ft, SDF(r, t-ft), float(i));
+		if(IS_CLOSE_TO_SURFACE(ft,t)) return vec3(t, SDF(r, t-ft), float(i));
 		t += ft;
 	}
-	return vec3(t, ft, float(st_stepcount));
+	return vec3(t, ft, float(maxiters));
 }

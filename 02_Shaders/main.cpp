@@ -140,10 +140,13 @@ int main( int argc, char* args[] )
 			}
 			else if(!app.debug.pause)
 			{
-				gpu_first_timer.Start(); app.Update(); gpu_first_timer.Stop();			//UPDATE #1
-				gpu_first_timer.swap();
+				gpu_first_timer.Start();
+				app.Update();//UPDATE #1
+				
+				gpu_first_timer.Stop();			
+				gpu_first_timer.Swap();
+				float first_frame_time = gpu_first_timer.QuerryMillisecs();
 
-				float first_frame_time = gpu_first_timer.GetLastDeltaMilli();
 				times.sum_of_updates = first_frame_time;
 				auto &u = times.update[std::min(times.consts.N - 1, app.iternum - 1)];
 				u = glm::mix<float>(first_frame_time, u, times.consts.learning_rate);			//moving avg
@@ -157,13 +160,15 @@ int main( int argc, char* args[] )
 						 sum += times.update[std::min(times.consts.N - 1, to_update + start_iternum)])
 						++to_update;
 					to_update += times.learned_update_diff;
+
 					gpu_update_timer.Start();
 					for (int i=0; i < to_update ; ++i)
 						app.Update();
-					gpu_update_timer.Stop();
-					gpu_update_timer.swap();
 
-					float sum_time = gpu_update_timer.GetLastDeltaMilli();
+					gpu_update_timer.Stop();
+					gpu_update_timer.Swap();
+					float sum_time = gpu_update_timer.QuerryMillisecs();
+
 					float avg_updated = sum_time / (float) to_update;
 					for (int i = start_iternum; i < start_iternum + to_update; ++i)
 					{
@@ -182,11 +187,11 @@ int main( int argc, char* args[] )
 			ImGui::Render();
 
 			gpu_render_timer.Stop();
-			gpu_render_timer.swap();
+			gpu_render_timer.Swap();
 
 			SDL_GL_SwapWindow(win);
 
-			times.render = glm::mix<float>((float)gpu_render_timer.GetLastDeltaMilli(), times.render, times.consts.learning_rate);
+			times.render = glm::mix<float>((float)gpu_render_timer.QuerryMillisecs(), times.render, times.consts.learning_rate);
 			times.total = times.sum_of_updates + times.render;
 
 			const size_t N = 25;

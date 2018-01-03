@@ -6,6 +6,8 @@ vec3 camera()
 	return normalize(ab);
 }
 
+vec3 spheretrace_1(const in Ray r, in float t, in float ft, const in int maxiters);
+
 void main()
 {
 	vec4 in_0 = texture2D(in_nearest_0, vs_tex);
@@ -19,18 +21,16 @@ void main()
 	float ao = 1 - in_2.w;
 
 	Ray r = Ray(camera(), cam_eye);
-	vec3 depth;
+	vec3 depth = vec3(in_0.x, in_0.y, 0);
 	
 	float pixel_size = t * cam_pixel_growth;
-	t-=pixel_size;
+	//t-=pixel_size;
 
-	if(ft < 1000 && (iternum == 0 || ft > pixel_size*0.1))
+	depth = spheretrace_1(r, t, 0, 1);
+
+	if(depth.y < 10000 && !IS_CLOSE_TO_SURFACE(depth.y,depth.y))
 	{
-		depth = spheretrace(r, t, ft);
-	}
-	else
-	{
-		depth = vec3(t, ft, 0);
+		depth = spheretrace(r, depth.x, 0, st_stepcount);
 	}
 
 	pixel_size = depth.x * cam_pixel_growth;
@@ -46,11 +46,11 @@ void main()
 	ao = ambient(r.p, n, ao);	//this is the sum of the ambient occulution
 	
 	vec3 col;
-	if(ft > 1000)	col = skylight(r.p, r.v);
+	if(ft > 10000)	col = skylight(r.p, r.v);
 	else			col = shade(r, n, clamp(1 - ao_strength * ao, 0, 1), sw.x);
 	
 	//reverse data mapping
-	out_nearest_0 = vec4(t, ft, iternum, sw.y);
+	out_nearest_0 = vec4(t, ft, depth.z, sw.y);
 	out_linear_1 = vec4(n, 1 - sw.x);
 	out_linear_2 = vec4(col, 1 - ao);
 }

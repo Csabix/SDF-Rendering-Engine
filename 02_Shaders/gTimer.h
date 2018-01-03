@@ -19,15 +19,12 @@ public:
 
 	void Start();
 	void Stop();
-	inline void swap() { act = 1 - act; }
-
-	inline GLuint64 GetLastDeltaNano(){	return last_delta;}
-	//inline double GetLastDeltaMicro(){	return last_delta / 1000.0f;}
-	inline double GetLastDeltaMilli(){	return last_delta / 1000000.0f;}
+	double QuerryMillisecs();
+	inline void Swap() { act = 1 - act; }
 
 private:
 	GLuint		queries[2];
-	int act = 0;
+	int			act = 0;
 	GLuint64	last_delta;
 };
 
