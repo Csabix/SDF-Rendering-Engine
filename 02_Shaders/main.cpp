@@ -3,8 +3,8 @@
 #include <SDL_opengl.h>
 #include <iostream>
 #include <sstream>
-#include "imgui\imgui.h"
-#include "imgui\imgui_impl_sdl_gl3.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_sdl_gl3.h"
 #include "MyApp.h"
 #include "gTimer.h"
 
@@ -22,7 +22,7 @@ int main( int argc, char* args[] )
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,          8);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,		1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,          24);
-	
+
 	SDL_Window *win = SDL_CreateWindow( "Hello SDL&OpenGL!", 100, 100, 1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);			// megjelenítési tulajdonságok
 	glassert(win != nullptr);
 
@@ -32,18 +32,18 @@ int main( int argc, char* args[] )
 	glassert(context != nullptr);
 
 	SDL_GL_SetSwapInterval(-1);
-	
+
 	glassert(glewInit() == GLEW_OK);
 
-	int glVersion[2] = {-1, -1}; 
-	glGetIntegerv(GL_MAJOR_VERSION, &glVersion[0]); glGetIntegerv(GL_MINOR_VERSION, &glVersion[1]); 
+	int glVersion[2] = {-1, -1};
+	glGetIntegerv(GL_MAJOR_VERSION, &glVersion[0]); glGetIntegerv(GL_MINOR_VERSION, &glVersion[1]);
 	std::cout << "Running OpenGL " << glVersion[0] << "." << glVersion[1] << std::endl;
 	glassert(glVersion[0] != -1 || glVersion[1] != -1);
 
 	std::stringstream window_title;
 	window_title << "SDL Renderer (OpenGL " << glVersion[0] << "." << glVersion[1] << ')';
 	SDL_SetWindowTitle(win, window_title.str().c_str());
-	
+
 	//ImGui::GetIO().Fonts->AddFontDefault();
 	{// app
 		for(int i = 0; i < 8; ++i)
@@ -174,8 +174,8 @@ int main( int argc, char* args[] )
 			{
 				gpu_first_timer.Start();
 				app.Update();//UPDATE #1
-				
-				gpu_first_timer.Stop();			
+
+				gpu_first_timer.Stop();
 				gpu_first_timer.Swap();
 				float first_frame_time = gpu_first_timer.QuerryMillisecs();
 
@@ -186,7 +186,7 @@ int main( int argc, char* args[] )
 
 				if(times.optimize)
 				{			//the very first iterations has to keep exactly the render times, later it is OK to be bit late, even 2x slower
-					int to_update = 0, const start_iternum = app.iternum;
+					int to_update = 0; const int start_iternum = app.iternum;
 					for (float sum = first_frame_time + times.render;
 						 sum < times.consts.target;
 						 sum += times.update[std::min(times.consts.N - 1, to_update + start_iternum)])

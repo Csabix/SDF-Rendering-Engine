@@ -1,6 +1,6 @@
 //Data Visualization related functions of Debug Window
 #include "DebugWindow.h"
-#include "imgui\imgui.h"
+#include "imgui/imgui.h"
 #include "GPUState.h"
 #include "Uniforms.h"
 #include "FileIO.h"
@@ -280,9 +280,9 @@ void GUI::DebugWindow::ShowVisualisationOptions()
 		ImGui::TextDisabled("Learned update diff %d", times.learned_update_diff);
 		ImGui::TextDisabled("Number of  updates: %d", times.num_of_updates);
 		float width = ImGui::GetContentRegionAvailWidth();
-		
+
 		ImGui::PlotHistogram("##UPDATES",times.update.data(),times.update.size()/8, 0,nullptr,0,times.consts.target,ImVec2(width,10*sqrtf(width)));
-		
+
 		if(ImGui::BeginChild("Time prediction vector", ImVec2(0, 260)))
 		{
 			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[0]);

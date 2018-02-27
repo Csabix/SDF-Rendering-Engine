@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <cstring>
 
 typedef std::vector<std::string> FileList;
 

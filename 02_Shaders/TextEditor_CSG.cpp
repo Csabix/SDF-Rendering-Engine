@@ -1,5 +1,5 @@
 #include "TextEditor.h"
-#include "imgui\imgui.h"
+#include "imgui/imgui.h"
 
 void GUI::TextEditor::DispCSG_Primitive(GUI::TextEditor::CSG_Primitive & prim)
 {
@@ -81,7 +81,7 @@ GUI::TextEditor::CSG_Edge::CSG_Edge() : node(new CSG_Node()){}
 
 GUI::TextEditor::CSG_Edge::~CSG_Edge(){	delete node;}
 
-GUI::TextEditor::CSG_Edge::CSG_Edge(CSG_Edge & edge)
+GUI::TextEditor::CSG_Edge::CSG_Edge(CSG_Edge && edge)
 {
 	node = new CSG_Node();
 	std::swap(edge.node, node);
@@ -90,7 +90,7 @@ GUI::TextEditor::CSG_Edge::CSG_Edge(CSG_Edge & edge)
 	projective = edge.projective;
 }
 
-GUI::TextEditor::CSG_Edge& GUI::TextEditor::CSG_Edge::operator = (CSG_Edge & edge)
+GUI::TextEditor::CSG_Edge& GUI::TextEditor::CSG_Edge::operator = (CSG_Edge && edge)
 {
 	std::swap(edge.node, node);
 	transpose = edge.transpose;

@@ -18,7 +18,7 @@ namespace GUI
 
 		ShaderProg compute;
 		ShaderProg show;
-		
+
 		void KeyboardDown(SDL_Keycode key);
 		void KeyboardUp(SDL_Keycode key);
 
@@ -123,8 +123,8 @@ namespace GUI
 			glm::mat3 rotate;
 			glm::mat4 projective;
 			CSG_Edge();			~CSG_Edge();
-			CSG_Edge(CSG_Edge & edge);
-			GUI::TextEditor::CSG_Edge & operator=(CSG_Edge & edge);
+			CSG_Edge(CSG_Edge && edge);
+			GUI::TextEditor::CSG_Edge & operator=(CSG_Edge && edge);
 		};
 
 		enum CSG_PRIMITIVE_T
@@ -158,7 +158,7 @@ namespace GUI
 		{
 			CSG_Node root;
 		} csg;
-	
+
 		bool BuildComputeFragShader();
 		bool ReloadFragShaderConstCode();
 		bool BuildComputeVertShader();

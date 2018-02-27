@@ -1,6 +1,6 @@
 #include "DebugWindow.h"
-#include "imgui\imgui.h"
-#include "imgui\auto.h"
+#include "imgui/imgui.h"
+//#include "imgui/auto.h"
 #include "FileIO.h"
 //#include "Uniforms.h"
 
@@ -61,7 +61,7 @@ void GUI::DebugWindow::ShowFunctionOptions()
 {
 	if (ImGui::Button("Measure times"))	this->measure_performance = true;
 	static std::string ref_image_path = "C:/Users/Csabix/Documents/Grafika/RawData/csg.bin";
-	ImGui::Auto(ref_image_path, "Ref Img Path");
+	//ImGui::Auto(ref_image_path, "Ref Img Path");
 	if (ImGui::Button("Load Ref image"))
 	{
 		FileIO::LoadUnformattedData(ref_image_path.data(), reference_image);
@@ -73,12 +73,12 @@ void GUI::DebugWindow::ShowFunctionOptions()
 		reference_image.resize(reference_image.size() / 4);
 		reference_image.shrink_to_fit();
 	}
-	ImGui::Auto(this->perfdata, "PerfTimes");
+	//ImGui::Auto(this->perfdata, "PerfTimes");
 
 	ImGui::InputTextMultiline("Runtimes", this->text_runtimes);
 
 	ImGui::Separator();
-	
+
 	functions.resolution_multipier.ChangeFunction();
 	functions.spheretrace_stepcount.ChangeFunction();
 	functions.shadow_stepcount.ChangeFunction();

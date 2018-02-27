@@ -18,7 +18,7 @@ bool CMyApp::Init()
 	//gpu.pong.set(1280,720);
 	//editor.Resize(1280,720);
 	Resize(1280, 720);
-		
+
 	editor.RebuildShowShortcut();
 	editor.Open("Shaders/SDF/mandelbulb_iq.frag");
 	editor.RebuildCompShortcut();

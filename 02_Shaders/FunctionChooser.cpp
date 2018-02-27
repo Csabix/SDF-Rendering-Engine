@@ -1,6 +1,7 @@
 #include "FunctionChooser.h"
-#include <imgui/auto.h>
-
+#include <algorithm>
+//#include <imgui/auto.h>
+#include <imgui/imgui.h>
 
 void GUI::FunctionChooser::ConstantFunctionChooser()
 {
@@ -9,7 +10,7 @@ void GUI::FunctionChooser::ConstantFunctionChooser()
 
 void GUI::FunctionChooser::LinesFunctionChooser()
 {
-	ImGui::Auto(points, this->header_name);
+	//ImGui::Auto(points, this->header_name);
 }
 
 void GUI::FunctionChooser::HermiteFunctionChooser()
@@ -130,7 +131,7 @@ void GUI::LinesFunction::ChangeFunction()
 	if (ImGui::CollapsingHeader(header_name))
 	{
 		ImGui::Indent();
-		ImGui::Auto(points, header_name);
+		//ImGui::Auto(points, header_name);
 		std::stable_sort(points.begin(), points.end(), [](const glm::vec2 &a, const glm::vec2 & b)->bool
 			{
 				return a.x < b.x;

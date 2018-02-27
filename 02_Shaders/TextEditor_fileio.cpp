@@ -1,6 +1,7 @@
 //file input and output related functions of TextEditor
 #include "TextEditor.h"
-
+#define strcpy_s strcpy
+#define sprintf_s sprintf
 void GUI::TextEditor::Open(const char * file)
 {
 	if(FileIO::OpenFrom(file, text, &log))

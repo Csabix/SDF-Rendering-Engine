@@ -9,7 +9,7 @@
 	(*): driver és GPU függõ
 */
 
-#include <GL\glew.h>
+#include <GL/glew.h>
 #include <chrono>
 class GPU_Timer
 {

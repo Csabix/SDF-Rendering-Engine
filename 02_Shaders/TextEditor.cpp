@@ -1,5 +1,6 @@
 #include "TextEditor.h"
 #include <map>
+#define strcpy_s strcpy
 void GUI::TextEditor::Resize(float w, float h)
 {
 	sizes.full_width = w; sizes.full_height = h;

@@ -1,6 +1,6 @@
 //Render related functions of TextEditor
 #include "TextEditor.h"
-#include "imgui\imgui.h"
+#include "imgui/imgui.h"
 
 void GUI::TextEditor::Render()
 {
@@ -49,7 +49,7 @@ void GUI::TextEditor::ShowTab1()
 	ImGui::SameLine(0, 10);
 	if(ImGui::Button("REBUILD", ImVec2(sizes.win_width*0.5f - 5.f, 30.f)))
 		RebuildCompShortcut();
-	
+
 	ImGui::PopFont();
 	ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[options.fullscreen ? 2 : 0]);
 
@@ -58,7 +58,7 @@ void GUI::TextEditor::ShowTab1()
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 0, 0, 1));
 	ImGui::InputTextMultiline("##1", text.data(), text.size(), ImVec2(sizes.win_width, sizes.win_height - h - 30), ImGuiInputTextFlags_AllowTabInput);
 	text_bg_color = (ImGui::IsItemActive() ? ImVec4(1, 1, 1, 1) : ImVec4(1, 1, 1, 0.1f));
-	
+
 	ImGui::PopStyleColor(2);	ImGui::PopFont();
 	if(h > 75.1f) LogWindow(h);
 }

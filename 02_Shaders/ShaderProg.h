@@ -2,7 +2,7 @@
 #include <GL/glew.h>
 #include <vector>
 #include <map>
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 #include <iostream>
 //typedef std::vector<std::string> SourceCode;
 
