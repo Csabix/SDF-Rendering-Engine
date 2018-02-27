@@ -11,7 +11,7 @@ bool GUI::TextEditor::BuildComputeFragShader()
 
 bool GUI::TextEditor::ReloadFragShaderConstCode()
 {
-	source_codes.begin = FileIO::getCompFSCodeBegin();
+	source_codes.begin = FileIO::getCompFSCodeBegin(options.use_convex_optim);
 	source_codes.end = FileIO::getCompFSCodeEnd();
 	return true;
 }

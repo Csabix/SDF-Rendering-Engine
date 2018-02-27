@@ -102,7 +102,7 @@ namespace GUI
 		struct //stats
 		{
 			std::vector<glm::vec4> pixeldata;
-			glm::vec4 max, min, avg, sd;
+			glm::dvec4 max, min, avg, sd;
 			std::vector<float> histograms[4];
 			glm::ivec4 hist_Ns = glm::ivec4(30);
 			std::string latex_hist[4];

@@ -51,6 +51,7 @@ namespace GUI
 		{
 			bool fullscreen = false;
 			bool log_copyable = false;
+			bool use_convex_optim = false;
 		} options;
 		struct
 		{

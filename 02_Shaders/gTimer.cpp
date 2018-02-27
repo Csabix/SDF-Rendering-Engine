@@ -1,5 +1,6 @@
 #include "gTimer.h"
 #include "GLCHECK.h"
+#include <iostream>
 
 GPU_Timer::GPU_Timer(void)
 {

@@ -150,9 +150,10 @@ bool FileIO::OpenFrom(const char *__restrict path, std::vector<char> &__restrict
 	in.close(); return true;
 }
 
-std::string FileIO::getCompFSCodeBegin()
+std::string FileIO::getCompFSCodeBegin(bool use_convex_opt)
 {
 	std::string code = "#version 450";
+	code += (use_convex_opt ? "\n#define USE_CONVEX_OPT" : "");
 	std::vector<std::string> files = getBeginShaderProgramFiles();
 	loadFilesIntoString(files, code);
 	return code;

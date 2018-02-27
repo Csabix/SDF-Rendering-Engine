@@ -23,7 +23,7 @@ namespace FileIO
 		loadFileIntoBufferString(str.c_str(), text);
 	}*/
 
-	std::string getCompFSCodeBegin();
+	std::string getCompFSCodeBegin(bool use_convex_opt = false);
 	std::string getCompFSCodeEnd();
 	std::string getCompVSCode();
 	std::string getShowFSCode();

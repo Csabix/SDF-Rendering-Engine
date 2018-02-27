@@ -87,7 +87,7 @@ void GUI::DebugWindow::ShowFunctionOptions()
 
 void GUI::DebugWindow::GenPerfStrings()
 {
-	const int test_cnt = 15;
+	const int test_cnt = this->perfdata.size()/10;
 	text_runtimes = "Rendertimes";
 	for (int i = 0; i < 10; ++i)
 		text_runtimes += "\t" + std::to_string(test_iterfun(i));
@@ -110,7 +110,7 @@ void GUI::DebugWindow::GenPerfStrings()
 			text_runtimes += "\t" + std::to_string(this->perfdata[j*10 + i].error);
 	}
 
-	text_runtimes += "\n\nError x Time";
+	/*text_runtimes += "\n\nError x Time";
 	for (int i = 0; i < 10; ++i)
 		text_runtimes += "\t" + std::to_string(test_iterfun(i));
 	for (int j = 0; j < test_cnt; ++j)
@@ -119,5 +119,5 @@ void GUI::DebugWindow::GenPerfStrings()
 		text_runtimes += this->perfdata[j*10].name;
 		for (int i = 0; i < 10; ++i)
 			text_runtimes += "\t" + std::to_string(this->perfdata[j*10 + i].other_time_ms * this->perfdata[j*10 + i].error);
-	}
+	}*/
 }

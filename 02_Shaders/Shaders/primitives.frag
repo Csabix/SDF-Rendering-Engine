@@ -39,16 +39,19 @@ float torus( vec3 p, vec2 t )
 
 uniform float cam_pixel_growth = SQRT2 / length(vec2(1280 , 760)) ;
 
+#ifdef USE_CONVEX_OPT
+float konvex_optimize(float f, float vdf)
+{
+	if (abs(vdf) < 0.01) return f;
+	float s = f /(cam_pixel_growth - vdf);
+	if (s < -0.01) return 2000;
+	return clamp(s,f, 2000);
+}
+#else
 #define konvex_optimize(f, vdf) f	//no optimalization
+#endif
 //#define konvex_optimize(f, vdf) (abs(vdf) < 0.01 ? f : (vdf < 0 && f > 0 ? 2000 : f/abs(vdf*1.1) ))
 //#define konvex_optimize(f, vdf) ( f < 0 ? f : max(f /(cam_pixel_growth - vdf),f))
-/*float konvex_optimize(float f, float vdf)
-{
-	if (vdf < 0.01) return f;
-	float s = f /(cam_pixel_growth - vdf);
-	if (s < -0.1) return 2000;
-	return clamp(s,f, 2000);
-}*/
 //planes
 
 float plane(in vec3 p, in vec3 v, in vec3 n)
@@ -60,8 +63,6 @@ float plane(in vec3 p, in vec3 v, in vec3 n)
 #define planeYZ(p, v) plane(p,v, vec3(1,0,0))
 #define planeXZ(p, v) plane(p,v, vec3(0,1,0))
 #define planeXY(p, v) plane(p,v, vec3(0,0,1))
-
-//convex stuff:
 
 float sphere(const in vec3 p, const in vec3 v, const in float r)
 {

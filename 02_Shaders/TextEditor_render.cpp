@@ -191,6 +191,12 @@ void GUI::TextEditor::MenuBar()
 			}
 			ImGui::EndMenu();
 		}
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, { 1,1,1,0.5f });
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, { 1,1,1,0.7f });
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, { 1,1,1,0.9f });
+		ImGui::PushStyleColor(ImGuiCol_CheckMark, { 0,0,0,1 });
+		ImGui::Checkbox("Convex Optimization", &this->options.use_convex_optim);
+		ImGui::PopStyleColor(4);
 		ImGui::EndMenuBar();
 	}
 }

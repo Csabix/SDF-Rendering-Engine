@@ -54,23 +54,47 @@ int main( int argc, char* args[] )
 
 		// PERFORMANCE TEST DATA
 		for (int i = 0; i < 10; ++i)
-			app.debug.perfdata.push_back({ "1 res, basic", Uniforms::ALGORITHM::ST_1 , {1.f}, {test_iterfun(i)} });
+			app.debug.perfdata.push_back({ "basic", Uniforms::ALGORITHM::ST_1 , {1.f}, {test_iterfun(i)} });
 		for (int i = 0; i < 10; ++i)
-			app.debug.perfdata.push_back({ "1 res, relaxed", Uniforms::ALGORITHM::ST_2 , {1.f}, {test_iterfun(i)} });
+			app.debug.perfdata.push_back({ "relaxed", Uniforms::ALGORITHM::ST_2 , {1.f}, {test_iterfun(i)} });
 		for (int i = 0; i < 10; ++i)
-			app.debug.perfdata.push_back({ "1 res, enhanced", Uniforms::ALGORITHM::ST_3 , {1.f}, {test_iterfun(i)} });
+			app.debug.perfdata.push_back({ "enhanced", Uniforms::ALGORITHM::ST_3 , {1.f}, {test_iterfun(i)} });
+
+		/*for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "2 res, basic", Uniforms::ALGORITHM::ST_1 , {0.5f, 1.f}, {test_iterfun(i) / 8, 7*test_iterfun(i)/8} });
 		for (int i = 0; i < 10; ++i)
-			app.debug.perfdata.push_back({ "2 res, basic", Uniforms::ALGORITHM::ST_1 , {0.5f,1.f}, {test_iterfun(i)/2,test_iterfun(i)/2} });
+			app.debug.perfdata.push_back({ "2 res, relaxed", Uniforms::ALGORITHM::ST_2 , {0.5f, 1.f}, {test_iterfun(i) / 8, 7*test_iterfun(i)/8} });
 		for (int i = 0; i < 10; ++i)
-			app.debug.perfdata.push_back({ "2 res, relaxed", Uniforms::ALGORITHM::ST_2 , {0.5f,1.f}, {test_iterfun(i)/2,test_iterfun(i)/2} });
+			app.debug.perfdata.push_back({ "2 res, enhanced", Uniforms::ALGORITHM::ST_3 , {0.5f, 1.f}, {test_iterfun(i) / 8, 7*test_iterfun(i)/8} });
+
 		for (int i = 0; i < 10; ++i)
-			app.debug.perfdata.push_back({ "2 res, enhanced", Uniforms::ALGORITHM::ST_3 , {0.5f,1.f}, {test_iterfun(i)/2,test_iterfun(i)/2} });
+			app.debug.perfdata.push_back({ "3 res, basic", Uniforms::ALGORITHM::ST_1 , {0.33f, 0.67f, 1.f}, {test_iterfun(i) / 8, test_iterfun(i) / 8, 3*test_iterfun(i)/4} });
 		for (int i = 0; i < 10; ++i)
-			app.debug.perfdata.push_back({ "3 res, basic", Uniforms::ALGORITHM::ST_1 , {0.33f, 0.66f, 1.f}, {test_iterfun(i)/3,test_iterfun(i)/3, test_iterfun(i) - 2*(test_iterfun(i)/3)} });
+			app.debug.perfdata.push_back({ "3 res, relaxed", Uniforms::ALGORITHM::ST_2 , {0.33f, 0.67f, 1.f}, {test_iterfun(i) / 8, test_iterfun(i) / 8, 3*test_iterfun(i)/4} });
 		for (int i = 0; i < 10; ++i)
-			app.debug.perfdata.push_back({ "3 res, relaxed", Uniforms::ALGORITHM::ST_2 , {0.33f, 0.66f, 1.f},{test_iterfun(i)/3,test_iterfun(i)/3, test_iterfun(i) - 2*(test_iterfun(i)/3)} });
+			app.debug.perfdata.push_back({ "3 res, enhanced", Uniforms::ALGORITHM::ST_3 , {0.33f, 0.67f, 1.f}, {test_iterfun(i) / 8, test_iterfun(i) / 8, 3*test_iterfun(i)/4} });
+
 		for (int i = 0; i < 10; ++i)
-			app.debug.perfdata.push_back({ "3 res, enhanced", Uniforms::ALGORITHM::ST_3 , {0.33f, 0.66f, 1.f}, {test_iterfun(i)/3,test_iterfun(i)/3, test_iterfun(i) - 2*(test_iterfun(i)/3)} });
+			app.debug.perfdata.push_back({ "4 res, basic", Uniforms::ALGORITHM::ST_1 , {0.25f, 0.5f, 0.75f, 1.f}, {test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, 5*test_iterfun(i)/8} });
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "4 res, relaxed", Uniforms::ALGORITHM::ST_2 , {0.25f, 0.5f, 0.75f, 1.f}, {test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, 5*test_iterfun(i)/8} });
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "4 res, enhanced", Uniforms::ALGORITHM::ST_3 , {0.25f, 0.5f, 0.75f, 1.f}, {test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, 5*test_iterfun(i)/8} });
+
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "5 res, basic", Uniforms::ALGORITHM::ST_1 , {0.2f, 0.4f, 0.6f, 0.8f, 1.f}, {test_iterfun(i) / 8,test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, 4*test_iterfun(i)/8} });
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "5 res, relaxed", Uniforms::ALGORITHM::ST_2 , {0.2f, 0.4f, 0.6f, 0.8f, 1.f}, {test_iterfun(i) / 8,test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, 4*test_iterfun(i)/8} });
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "5 res, enhanced", Uniforms::ALGORITHM::ST_3 , {0.2f, 0.4f, 0.6f, 0.8f, 1.f}, {test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, 4*test_iterfun(i)/8} });
+
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "6 res, basic", Uniforms::ALGORITHM::ST_1 , {0.167f,0.333f,0.5f,0.667f,0.833f,1.f}, {test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, 3*test_iterfun(i)/8} });
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "6 res, relaxed", Uniforms::ALGORITHM::ST_2 , {0.167f,0.333f,0.5f,0.667f,0.833f,1.f}, {test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, 3*test_iterfun(i)/8} });
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "6 res, enhanced", Uniforms::ALGORITHM::ST_3 , {0.167f,0.333f,0.5f,0.667f,0.833f,1.f}, {test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, test_iterfun(i) / 8, 3*test_iterfun(i)/8} });
+
 		for (int i = 0; i < 10; ++i)
 			app.debug.perfdata.push_back({ "4 res, basic", Uniforms::ALGORITHM::ST_1 , {0.25f,0.5f,0.75f, 1.f}, {test_iterfun(i)/4,test_iterfun(i)/4,test_iterfun(i)/4,test_iterfun(i)/4}, });
 		for (int i = 0; i < 10; ++i)
@@ -78,11 +102,17 @@ int main( int argc, char* args[] )
 		for (int i = 0; i < 10; ++i)
 			app.debug.perfdata.push_back({ "4 res, enhanced", Uniforms::ALGORITHM::ST_3 , {0.25f,0.5f,0.75f, 1.f}, {test_iterfun(i)/4,test_iterfun(i)/4,test_iterfun(i)/4,test_iterfun(i)/4} });
 		for (int i = 0; i < 10; ++i)
-			app.debug.perfdata.push_back({ "4 heu, basic", Uniforms::ALGORITHM::ST_1 , {0.40f,0.65f,0.85f, 1.f}, {test_iterfun(i)/4,test_iterfun(i)/4,test_iterfun(i)/4,test_iterfun(i)/4}, });
+			app.debug.perfdata.push_back({ "3 res, basic", Uniforms::ALGORITHM::ST_1 , {0.33f, 0.66f, 1.f}, {test_iterfun(i)/3,test_iterfun(i)/3, test_iterfun(i) - 2*(test_iterfun(i)/3)} });
 		for (int i = 0; i < 10; ++i)
-			app.debug.perfdata.push_back({ "4 heu, relaxed", Uniforms::ALGORITHM::ST_2 , {0.40f,0.65f,0.85f, 1.f}, {test_iterfun(i)/4,test_iterfun(i)/4,test_iterfun(i)/4,test_iterfun(i)/4} });
+			app.debug.perfdata.push_back({ "3 res, relaxed", Uniforms::ALGORITHM::ST_2 , {0.33f, 0.66f, 1.f},{test_iterfun(i)/3,test_iterfun(i)/3, test_iterfun(i) - 2*(test_iterfun(i)/3)} });
 		for (int i = 0; i < 10; ++i)
-			app.debug.perfdata.push_back({ "4 heu, enhanced", Uniforms::ALGORITHM::ST_3 , {0.40f,0.65f,0.85f, 1.f}, {test_iterfun(i)/4,test_iterfun(i)/4,test_iterfun(i)/4,test_iterfun(i)/4} });
+			app.debug.perfdata.push_back({ "3 res, enhanced", Uniforms::ALGORITHM::ST_3 , {0.33f, 0.66f, 1.f}, {test_iterfun(i)/3,test_iterfun(i)/3, test_iterfun(i) - 2*(test_iterfun(i)/3)} });
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "2 res, basic", Uniforms::ALGORITHM::ST_1 , {0.5f,1.f}, {test_iterfun(i)/2,test_iterfun(i)/2} });
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "2 res, relaxed", Uniforms::ALGORITHM::ST_2 , {0.5f,1.f}, {test_iterfun(i)/2,test_iterfun(i)/2} });
+		for (int i = 0; i < 10; ++i)
+			app.debug.perfdata.push_back({ "2 res, enhanced", Uniforms::ALGORITHM::ST_3 , {0.5f,1.f}, {test_iterfun(i)/2,test_iterfun(i)/2} });*/
 		// =====================
 
 		glassert(app.Init());			glcheck("Init Error");
@@ -134,8 +164,10 @@ int main( int argc, char* args[] )
 			{
 				app.measure_error();
 				app.warmup_run();				//warmup
+				app.warmup_run();				//warmup
 				app.measure_performance();		//start measurement
 				app.debug.GenPerfStrings();
+				std::cout << "All done" << std::endl;
 				app.debug.measure_performance = false;
 			}
 			else if(!app.debug.pause)

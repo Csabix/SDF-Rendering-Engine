@@ -115,16 +115,22 @@ void GUI::DebugWindow::UpdateHistogramCH(int ch)
 	stats.histograms[ch].assign(stats.hist_Ns[ch], 0.f);
 	float multipier = (float) stats.hist_Ns[ch] / (stats.max[ch] - stats.min[ch]);
 	int maxind = (int) stats.hist_Ns[ch] - 1;
-	for(const auto& pix : stats.pixeldata)
-		++stats.histograms[ch][std::min<int>((pix[ch] - stats.min[ch]) * multipier, maxind)];
+	glm::vec4 * pix_data = &stats.pixeldata[0];
+	float *hist_data = &stats.histograms[ch][0]; //fast in debug mode as well
+	for (int i=0; i < stats.pixeldata.size(); ++i)
+	{
+		int idx = glm::clamp<int>((pix_data[i][ch] - stats.min[ch]) * multipier,0,maxind);
+		++hist_data[idx];
+	}
 	float normalizer = 1.f / (float)stats.pixeldata.size();
 	//normalize histogram and generate latex from histograms
-	auto &hs = stats.histograms[ch];		auto &lh = stats.latex_hist[ch];
+	//auto &hs = stats.histograms[ch];
+	auto &lh = stats.latex_hist[ch];
 	lh = "\\begin{tikzpicture}\n\\begin{axis}[ybar interval, ymax = 1, ymin = 0]\n\\addplot coordinates { ";
-	for(int j = 0; j < hs.size(); ++j)
+	for(int j = 0; j < stats.histograms[ch].size(); ++j)
 	{
-		hs[j] *= normalizer;	//normalizing
-		lh += "(" + std::to_string(j / multipier + stats.min[ch]) + ", " + std::to_string(hs[j]) + ") ";
+		hist_data[j] *= normalizer;	//normalizing
+		lh += "(" + std::to_string(j / multipier + stats.min[ch]) + ", " + std::to_string(hist_data[j]) + ") ";
 	}
 	lh += "}; \n\\end{axis}\n\\end{tikzpicture}\n%" + std::to_string(stats.min[ch]) + " && "
 		   + std::to_string(stats.max[ch]) + " && " + std::to_string(stats.avg[ch]) + " && " + std::to_string(stats.sd[ch]);
@@ -216,17 +222,21 @@ void GUI::DebugWindow::ShowVisualisationOptions()
 			glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, stats.pixeldata.data());
 
 			stats.min = stats.pixeldata[0]; stats.max = stats.pixeldata[0];
-			for(const auto& pix : stats.pixeldata)
+			glm::vec4 *pix_data = stats.pixeldata.data();
+			for(int i=0; i < stats.pixeldata.size(); ++i)
 			{
-				stats.min = glm::min(stats.min, pix);	stats.max = glm::max(stats.max, pix);
-				stats.avg += pix;						stats.sd += pix * pix;
+				glm::dvec4 dpix = static_cast<glm::dvec4>(pix_data[i]);
+				stats.min = glm::min(stats.min, dpix);
+				stats.max = glm::max(stats.max, dpix);
+				stats.avg += dpix;
+				stats.sd += dpix * dpix;
 			}
-			float normalizer = 1.f / (float)stats.pixeldata.size();
+			double normalizer = 1.f / (double)stats.pixeldata.size();
 			stats.avg *= normalizer;		stats.sd= glm::sqrt(stats.sd * normalizer - stats.avg * stats.avg);
 			for(int i = 0; i < 4; ++i) UpdateHistogramCH(i);
 		}
 		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[0]);
-		ImGui::Columns(2, "1", true);		DispHistDataCH(0);
+		ImGui::Columns(2, "1", true);	DispHistDataCH(0);
 		ImGui::NextColumn();			DispHistDataCH(1);
 		ImGui::Columns(1, 0, false);	ImGui::Separator();
 		ImGui::Columns(2, "2", true);	DispHistDataCH(2);

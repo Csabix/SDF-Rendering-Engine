@@ -458,10 +458,12 @@ double CMyApp::calcerror()
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, debug.stats.pixeldata.data());
 	assert(debug.stats.pixeldata.size() == debug.reference_image.size());
 	double sum = 0;
+	float * ref_data = &debug.reference_image[0];
+	glm::vec4 * pix_data = &debug.stats.pixeldata[0];
 	for (int i = 0; i < debug.reference_image.size(); ++i)
 	{
-		double a = static_cast<double>(debug.reference_image[i]);
-		double b = static_cast<double>(debug.stats.pixeldata[i].x);
+		double a = static_cast<double>(ref_data[i]);
+		double b = static_cast<double>(pix_data[i].x);
 		sum += (a - b)*(a - b);
 	}
 	return sum / static_cast<double>(debug.reference_image.size());
@@ -469,15 +471,18 @@ double CMyApp::calcerror()
 
 void CMyApp::measure_performance()
 {
+	std::cout << "Starting time measurement...\n";
 	int N = debug.perfdata.size();
 	for (int bath_start = 0; bath_start < N; bath_start+=10)
 	{
 		for (int i = bath_start; i < std::min(bath_start + 10, N); ++i)
 		{
+			std::cout << "\tRunning " << debug.perfdata[i].name << "\t(" << debug.perfdata[i].iters[0] << ")\n";
 			perftest(debug.perfdata[i].resolutions, debug.perfdata[i].iters, static_cast<Uniforms::ALGORITHM>(debug.perfdata[i].alg), i%10);
 			perf_gpu_timers[i%10].Swap();
 			if (bath_start != 0) // pervious batch
 			{
+				std::cout << "\tMeasuring " << debug.perfdata[i-10].name << "\t(" << debug.perfdata[i-10].iters[0] << ")\n";
 				debug.perfdata[i-10].render_time_ms = perf_gpu_timers[i%10].QuerryMillisecs();
 			}
 		}
@@ -485,21 +490,34 @@ void CMyApp::measure_performance()
 	for (int i = N; i < N + 10; ++i) // get times for last batch
 	{
 		perf_gpu_timers[i%10].Swap();
+		std::cout << "\tMeasuring " << debug.perfdata[i-10].name << "\t(" << debug.perfdata[i-10].iters[0] << ")\n";
 		debug.perfdata[i-10].render_time_ms = perf_gpu_timers[i%10].QuerryMillisecs();
 	}
 }
 
 void CMyApp::warmup_run()
 {
+	std::cout << "Starting warmup run...\n";
+	std::string last = "";
 	for (PerfData &pdat : debug.perfdata)
+	{
+		if (last != pdat.name) std::cout << "\tRunning " << pdat.name << std::endl;
+		last = pdat.name;
 		runupdate(pdat.resolutions, pdat.iters, static_cast<Uniforms::ALGORITHM>(pdat.alg));
+	}
 }
 
 void CMyApp::measure_error()
 {
+	std::cout << "Starting error measurement...";
+	std::string last = "";
 	for (PerfData &pdat : debug.perfdata)
 	{
+		if (last != pdat.name) std::cout << "\n\tRunning " << pdat.name << '\t';
+		last = pdat.name;
 		runupdate(pdat.resolutions, pdat.iters, static_cast<Uniforms::ALGORITHM>(pdat.alg));
+		std::cout << '.';
 		pdat.error = calcerror();
 	}
+	std::cout << std::endl;
 }

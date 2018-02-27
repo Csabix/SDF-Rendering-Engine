@@ -26,9 +26,10 @@ void main()
 	float pixel_size = t * cam_pixel_growth;
 	//t-=pixel_size;
 
-	depth = spheretrace_1(r, t, 0, 1);
+	if(depth.x < 10000)
+		depth = spheretrace_1(r, t, 0, 1);
 
-	if(depth.y < 10000 && !IS_CLOSE_TO_SURFACE(depth.y,depth.y))
+	if(depth.y < 1000 && depth.x < 10000 && !IS_CLOSE_TO_SURFACE(depth.y,depth.y))
 	{
 		depth = spheretrace(r, depth.x, 0, st_stepcount);
 	}
@@ -46,7 +47,7 @@ void main()
 	ao = ambient(r.p, n, ao);	//this is the sum of the ambient occulution
 	
 	vec3 col;
-	if(ft > 10000)	col = skylight(r.p, r.v);
+	if(ft > 1000 || t > 10000)	col = skylight(r.p, r.v);
 	else			col = shade(r, n, clamp(1 - ao_strength * ao, 0, 1), sw.x);
 	
 	//reverse data mapping
