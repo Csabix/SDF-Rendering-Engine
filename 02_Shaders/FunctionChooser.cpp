@@ -1,6 +1,6 @@
 #include "FunctionChooser.h"
 #include <algorithm>
-#include <imgui/auto.h>
+//#include <imgui/auto.h>
 #include <imgui/imgui.h>
 
 void GUI::FunctionChooser::ConstantFunctionChooser()
@@ -10,7 +10,7 @@ void GUI::FunctionChooser::ConstantFunctionChooser()
 
 void GUI::FunctionChooser::LinesFunctionChooser()
 {
-	ImGui::Auto(points, this->header_name);
+	//ImGui::Auto(points, this->header_name);
 }
 
 void GUI::FunctionChooser::HermiteFunctionChooser()
