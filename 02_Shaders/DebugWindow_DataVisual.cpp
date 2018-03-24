@@ -287,8 +287,9 @@ void GUI::DebugWindow::ShowVisualisationOptions()
 		{
 			ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[0]);
 			ImGui::Separator();
+			float sum = 0.0;
 			for(int i = 0; i < times.consts.N - 1; ++i)
-				ImGui::TextDisabled("%d itaration time : %0.2f ms", i + 1, times.update[i]);
+				ImGui::TextDisabled("%d itaration time : %0.2f ms\t accumated sum: %0.02f ms", i + 1, times.update[i], sum+=times.update[i]);
 			ImGui::TextDisabled("Above %d iteration: %0.2f ms", times.consts.N, times.update[times.consts.N - 1]);
 			ImGui::Separator();
 			ImGui::PopFont();
